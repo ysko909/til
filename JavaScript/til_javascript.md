@@ -178,9 +178,9 @@ function draw(){
 - デフォルトのカラー空間は、各値が0から255の範囲のRGB。HSLでも指定が可能らしい。
 - 第2引数はアルファ値で、省略可能。アルファの範囲はデフォルトで0から255。
 
-----
+## マウスに追随するシェイプをp5.jsで実装する
 
-マウスに追随するシェイプをp5.jsで実装する。
+### detail
 
 ```javascript
 const W = 800;
@@ -233,8 +233,6 @@ function draw(){
 
 ### reference
 
-1. [pandasのdescribeで各列の要約統計量（平均、標準偏差など）を取得](https://note.nkmk.me/python-pandas-describe/)
-1. [Pythonのlambda（ラムダ式、無名関数）の使い方](https://note.nkmk.me/python-lambda-usage/)
 1. [p5.js Get Started](https://p5js.org/get-started/)
 1. [p5.js スピード入門](https://himco.jp/category/p5-js-%e3%82%b9%e3%83%94%e3%83%bc%e3%83%89-%e5%85%a5%e9%96%80/)
 

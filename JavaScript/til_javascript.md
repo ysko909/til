@@ -236,3 +236,44 @@ function draw(){
 1. [p5.js Get Started](https://p5js.org/get-started/)
 1. [p5.js スピード入門](https://himco.jp/category/p5-js-%e3%82%b9%e3%83%94%e3%83%bc%e3%83%89-%e5%85%a5%e9%96%80/)
 
+## Node.jsの環境をDockerで用意する
+
+### detail
+
+Node.jsの環境をDockerコンテナで用意する。
+
+```console
+docker-compose.yml
+  └── src/
+```
+
+- フォルダ構成は上記のような感じ。Node.jsのオフィシャルコンテナを利用するので、docker-compose.ymlだけあればいい。
+
+```dockerfile
+version: '3'
+
+services:
+  nodejs:
+    image: node:14-alpine
+
+    container_name: work_nodejs
+
+    tty: true
+
+    volumes:
+      - ./src:/app
+
+    working_dir: /app
+    
+    ports:
+      - "3000:3000"
+
+    command: yarn start
+```
+
+- Node.jsは14のAlpine Linuxを使う。
+- あとは`docker-compose run`するかvscodeで「Reopen in container」すればいい。
+
+### reference
+
+1. [DockerでNode.jsアプリケーションを開発する (1) Express.jsをコンテナ内で動かす](https://ishida-it.com/blog/post/2019-11-21-docker-nodejs/)

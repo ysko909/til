@@ -49,6 +49,8 @@ type Person = {
 
 ## TypeScriptでのクラス宣言と継承について
 
+### detail
+
 TypeScriptでのクラス宣言と継承について、挙動をメモする。
 
 ```typescript

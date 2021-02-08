@@ -123,6 +123,7 @@ console.log(piyo2.constructor.name);
 
 - TypeScriptでのクラス宣言は、`class`で宣言しプロパティを型情報とともに記述する。
 - 継承する場合`extends`で継承元のクラスを指定する。このとき、コンストラクタが存在する場合は`super()`で親コンストラクタを呼び出さないといけない。`super()`を読みだした後で、必要な処理を追加できる。
+- ちなみに、`.constructor.name`でクラス名を返してくれる。
 
 ```console
 Object {
@@ -172,3 +173,10 @@ Object {
 
 - 親クラスのメンバ関数を呼び出す場合、`super.`構文で呼び出せる。なお、上記のコードでは`Fuga`クラスにおいて親クラス`Hoge`のメンバ関数`add()`を呼び出す場合、**処理内容や戻り値は親クラスに記述されている内容に準拠する**。よって、`supeer.add()`を呼び出す`add_fuga_super()`の戻り値は、`Fuga`クラスではなく`Hoge`クラスであることに注意。
 - ちなみに上記のコードはCodepenのTypeScript環境で実行している。`add_fuga_super()`の戻り値が`Hoge`クラスであるにもかかわらず、変数宣言時に`Fuga`クラスであると宣言しているが、これはエラーにならない。そういうものなのか・・・（`Fuga`を`Hoge`や‘Piyo`に書き換えてもエラーとかにはならなかったので、少なくともCodepenのTS環境はこういうものらしい）。
+
+### reference
+
+1. [クラス](https://typescript-jp.gitbook.io/deep-dive/future-javascript/classes)
+1. [クラス](https://docs.solab.jp/typescript/class/inheritance/)
+1. [JSのクラス名をゲットする](https://qiita.com/makerbox/items/3f6ed31abbb128f5edb1)
+1. [JavaScriptの「型」の判定について](https://qiita.com/south37/items/c8d20a069fcbfe4fce85)

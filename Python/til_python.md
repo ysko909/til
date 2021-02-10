@@ -12,6 +12,7 @@ Pythonに関することはここに書く。
 
 1. [Markovify + Mecabによるマルコフ連鎖を使った文章生成](https://dai-py.hatenablog.com/entry/2019/04/09/023416)
 1. [markovifyを使ってマルコフ連鎖でなろう小説のタイトルを自動生成するぞ！](https://murabitoleg.com/markov-narou/)
+1. [マルコフ連鎖を使って〇〇っぽい文章を自動生成してみた](https://www.pc-koubou.jp/magazine/4238)
 
 ## 日本語専用形態素解析器Sudachi
 

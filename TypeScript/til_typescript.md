@@ -15,8 +15,7 @@ interface Person {
 }
 ```
 
-- `interface`を使ってオブジェクトの名前を宣言し、プロパティの型をそれぞれ定義する。
-- これと似たような機能を持つ`type`というものが存在する。
+`interface`を使ってオブジェクトの名前を宣言し、プロパティの型をそれぞれ定義する。これと似たような機能を持つ`type`というものが存在する。
 
 ```typescript
 type Person = {
@@ -25,21 +24,19 @@ type Person = {
 }
 ```
 
-- `interface`がクラスやオブジェクトの**規格を定義する**のに対し、`type`は**型や型の組み合わせに名前をつけている**。
-- 見た目だけだとイコールが付いている以外はどっちも一緒じゃねーか、と思うが実際の挙動は多少異なる。
+`interface`がクラスやオブジェクトの**規格を定義する**のに対し、`type`は**型や型の組み合わせに名前をつけている**。見た目だけだとイコールが付いている以外はどっちも一緒じゃねーか、と思うが実際の挙動は多少異なる。
 
 1. `interface`は宣言マージが可能。宣言マージとは、同じファイルやモジュール内に複数の同じ名前を持つ`interface`が存在した場合、自動的にまとめられて（マージされて）1つの`interface`として扱う機能。
 2. `interface`は`extends`、つまり継承が可能。
 3. `type`はあくまで型に名前をつける、という機能を提供しているに過ぎないので、比較的記述方法がバリエーションに富んでいる。Union型が宣言できるのも`type`の特徴。まあ、バリエーションに富んでいるというのは、裏を返すと選択肢が多いのでどれを選ぶか取捨選択が必要になる、という意味でもあるが。
 
-- 他にもあるが大きな違いがこのあたり。
-- じゃあ、どっちを使えばいいのだろうか。考え方はいくつかある。ただ、基本的には`type`を使ったほうがいいんじゃないだろうか。
+他にもあるが大きな違いがこのあたり。じゃあ、どっちを使えばいいのだろうか。考え方はいくつかある。ただ、基本的には`type`を使ったほうがいいんじゃないだろうか。
 
 1. 大前提として、チームでの開発ではチーム標準に準拠する。
 2. 宣言マージが必要なら`interface`を選ぶ。
 3. `type`は様々な型の定義ができるため、`interface`では記述できなくても`type`で統一が可能。
 
-- 上記の例ではオブジェクトの型の組み合わせに名前をつけているだけなので、`interface`も`type`も対して違いはない。が、Union型などの宣言は`interface`で実装できない。よって、`type`を基本的に使って、どうしてもというシチュエーションでのみ`interface`を使う運用がいいと思われる。
+上記の例ではオブジェクトの型の組み合わせに名前をつけているだけなので、`interface`も`type`も対して違いはない。が、Union型などの宣言は`interface`で実装できない。よって、`type`を基本的に使って、どうしてもというシチュエーションでのみ`interface`を使う運用がいいと思われる。
 
 ### reference
 
@@ -182,3 +179,96 @@ Object {
 1. [クラス](https://docs.solab.jp/typescript/class/inheritance/)
 1. [JSのクラス名をゲットする](https://qiita.com/makerbox/items/3f6ed31abbb128f5edb1)
 1. [JavaScriptの「型」の判定について](https://qiita.com/south37/items/c8d20a069fcbfe4fce85)
+
+## 型定義ファイルがないよと言われたら
+
+### detail
+
+TypeScriptの環境でコードを書き始めると（場合によってだと思うが）エラーを吐くことがある。
+
+```console
+Could not find a declaration file for module ‘react’.
+```
+
+エラーメッセージはこれ。今回は`create-react-app`を実行した環境において、コードを書き始めた際に上記のエラーが表示された。
+
+このメッセージで調べてみるとtsconfig.jsonに、`“noImplicitAny”: false,`と書けばいいと言っているブログの記事があったりする。このオプションがTrueだと、型定義のない変数を暗黙のany扱いすることを禁止する。つまりanyを使いたいなら明示的にanyを書かなければいけない、という制約を課すオプション。逆に言えばFalseではこの制約が働かない。ということは素のJavaScriptを書いているのと大差ないわけで、TypeScriptを使っている意味がなくなってしまう。
+
+じゃあどうするかというと、型情報を定義した**型定義ファイルをインストールする**必要がある。
+
+「型情報のインストールってなんのこっちゃ」という感じだが、TypeScriptは型を識別する都合上「型定義ファイル」というものを必要とする。JSはもともと動的型付けだから型を明記することはないし、ReactはもともとTypeScriptで記述されておらず、create-react-appしただけでは型情報が提供されない。よって、別途型情報を用意してやる必要がある。
+
+型情報は、メジャーなJSライブラリだとすでに用意されていることが多い。既存の型情報を利用するには@typesを使う。
+
+```console
+yarn add -D @types/react
+```
+
+上記のように`@types/ライブラリ名`で実行すれば、既存の型定義ファイルがインストールされる。
+
+```console
+$ yarn add @types/phaser
+error An unexpected error occurred: "https://registry.yarnpkg.com/@types%2fphaser: Not found".
+```
+
+型情報が存在しない場合は、上記のように「そんな型定義ファイルはないよ」とエラーになる。既存の型定義ファイルがないような場合は、[オリジナルで作成することも可能](http://typescript.ninja/typescript-in-definitelyland/definition-file.html)。
+
+なお、型情報が必要なのはあくまで開発中だけ。型情報があろうとなかろうと、リリースするパッケージに含める必要はないので-Dオプションをつけて開発用の依存関係としてインストールする。
+
+### reference
+
+1. [Adding TypeScript](https://create-react-app.dev/docs/adding-typescript/)
+2. [【TypeScript】【React】Could not find a declaration file for module ‘react’.の対処について](https://qiita.com/waniwaninowani/items/7ea8b4eacab296758c19)
+3. [TypeScript で型定義ファイル( d.ts )がないときの対処法](https://qiita.com/Nossa/items/726cc3e67527e896ed1e)
+4. [JavaScriptの資産と@types](http://typescript.ninja/typescript-in-definitelyland/at-types.html)
+
+## インデックスシグネチャについて
+
+### detail
+
+TSにて連想配列を取り扱う際に出てくるのがインデックスシグネチャ。インデックスシグネチャを用いて、連想配列に含まれるキーや値の型を指定できる。
+
+```typescript
+interface Hoge{
+    [key:string]:number;
+}
+
+const hoge: Hoge ={
+    foo:1,
+    bar:2,
+    baz:3
+};
+
+console.log(hoge['foo']);
+console.log(hoge.foo); // ピリオドでもOK
+hoge.foo = 100;
+console.log(hoge['foo']);
+console.log(hoge.foo);
+
+// hoge.foo = 'hoge'; これは「値はnumberだからstringは代入できないぜ」エラー
+
+hoge.foa = 9999; // 「foo」を入力しようとしてタイポ
+console.log(hoge.foo);
+console.log(hoge.foa);
+
+// hoge.foo.foobarbaz = 9999; これは「プロパティなし」エラー
+```
+
+`interface`を使って、連想配列のキーと値の型をそれぞれ指定する。ここではキーがstring、値がnumberとした。この設定に一致する場合は、値の設定が可能。
+
+```console
+1 
+1 
+100 
+100 
+100 
+9999 
+```
+
+なお、連想配列はもともとなかったキーと値を新たに設定することができる。「もともと存在するキーfooの値を書き換えようとして、タイポしたキーfoaに値を設定してしまう」という可能性はまあまあ考えられる。その場合は新しい要素として追加される。
+
+### reference
+
+1. [第9回　連想配列の取り扱い方](https://www.atmarkit.co.jp/ait/articles/1501/29/news117_4.html)
+2. [Index signature（インデックス型）](https://typescript-jp.gitbook.io/deep-dive/type-system/index-signatures)
+3. [TypeScript：インデックスシグネチャが型安全を破壊する例](https://qiita.com/aakasaka/items/0b081c90b1b99b82143c)

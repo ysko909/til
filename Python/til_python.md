@@ -57,7 +57,7 @@ Python上で利用するには、上記のようなコードになる。
 1. [SudachiPy](https://github.com/WorksApplications/SudachiPy)
 1. [Pythonで形態素解析器Sudachiを使う](https://ohke.hateblo.jp/entry/2019/03/09/101500)
 
-## Pythonで時系列データのテストデータを作成する方法についてまとめ。
+## Pythonで時系列データのテストデータを作成する方法について
 
 ### detail
 

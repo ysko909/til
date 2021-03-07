@@ -303,7 +303,7 @@ public update(): void {
 ただの画像ファイルをロードし、スプライト扱いで画面に表示させるには下記の方法でいい。
 
 ```javascript
-function preload() {
+preload() {
 
     this.load.image('beball', 'assets/sprites/beball1.png');
     this.load.image('atari', 'assets/sprites/atari400.png');
@@ -311,7 +311,7 @@ function preload() {
 
 }
 
-function create() {
+create() {
 
     this.add.sprite(200, 300, 'beball');
     this.add.sprite(500, 300, 'atari');

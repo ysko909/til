@@ -444,3 +444,75 @@ dir(pd.options.display)
 ### reference
 
 1. [pandasで表示が省略されるのを防ぐ](https://uyamazak.hatenablog.com/entry/2016/09/29/163534)
+
+## インスタンスメソッドとクラスメソッドとスタティックメソッドの違い
+
+### detail
+
+Pythonのメソッドには3種類存在する。
+
+- インスタンスメソッド
+- クラスメソッド
+- スタティックメソッド
+
+このうち、使用頻度が一番高いのがインスタンスメソッド。クラスメソッドは、ライブラリに実装されたものを利用することはままあると思う。が、自分で作成したクラスにクラスメソッドとして実装するなら、その機能を関数として実装してしまった方が可読性の面から楽なので、わざわざクラスメソッドを利用するケースはあまり多くない。
+
+```python
+>>> class Hoge:
+...   foo = 99
+...   def __init__(self):
+...     self.foo = 1
+...   def instance_method(self, arg):
+...     return self.foo + arg
+...   @classmethod
+...   def class_method(cls, arg):
+...     return cls.foo + arg
+...   @staticmethod
+...   def static_method(arg):
+...     return Hoge.foo + (arg * 2)
+... 
+>>> hoge = Hoge()
+>>> hoge.instance_method(1)
+2
+>>> hoge.class_method(1)
+100
+>>> hoge.static_method(1)
+101
+>>> Hoge.instance_method(1) # インスタンスメソッドはインスタンスを指定しないとクラス経由で呼び出せない
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: instance_method() missing 1 required positional argument: 'arg'
+>>> Hoge.class_method(1)
+100
+>>> Hoge.static_method(1)
+101
+>>> Hoge.instance_method(hoge, 1) # クラス経由で呼び出す場合、インスタンスを引数に指定すればインスタンスメソッドを呼び出せる
+2
+>>> Hoge.instance_method(Hoge, 1) # クラス経由で呼び出す場合、クラスを引数に指定してもインスタンスメソッドを呼び出せる
+100
+>>> Hoge.class_method(hoge, 1) # クラスメソッドはインスタンスメソッドと異なり、インスタンスやクラスを引数に指定できない
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: class_method() takes 2 positional arguments but 3 were given
+>>> Hoge.class_method(Hoge, 1)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: class_method() takes 2 positional arguments but 3 were given
+>>> Hoge.static_method(hoge, 1) # スタティックメソッドも、インスタンスやクラスを引数に指定できない
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: static_method() takes 1 positional argument but 2 were given
+>>> Hoge.static_method(Hoge, 1)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: static_method() takes 1 positional argument but 2 were given
+>>> 
+```
+
+|名前|引数|呼び出し|備考|
+|:-:|:-:|:-:|:-:|
+|インスタンスメソッド|self|インスタンス経由の場合、第1引数に呼び出したインスタンスが設定される。クラス経由の場合、引数にインスタンスかクラスの明示的な指定が必要。||
+
+### reference
+
+1. [Pythonで、呼び出し方によってメソッドの振る舞いを変える](https://qiita.com/masaru/items/5ebf2e96d6524830511b)

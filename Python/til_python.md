@@ -601,5 +601,6 @@ dtype: int64
 
 1. [pandas.DataFrame.head](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.head.html)
 2. [pandas.DataFrame.tail](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.tail.html)
-3. [python pandas select both head and tail](https://stackoverflow.com/questions/42504984/python-pandas-select-both-head-and-tail/47958056#47958056)
-4. [pandas DataFrameの出力行を絞るheadとtailを同時に使う](https://qiita.com/u1and0/items/00e1a723da490cd25eb4)
+3. [pandas.DataFrame.iloc](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.iloc.html)
+4. [python pandas select both head and tail](https://stackoverflow.com/questions/42504984/python-pandas-select-both-head-and-tail/47958056#47958056)
+5. [pandas DataFrameの出力行を絞るheadとtailを同時に使う](https://qiita.com/u1and0/items/00e1a723da490cd25eb4)

@@ -494,3 +494,12 @@ Phaser3自身が対応している再生可能な音声ファイルは`*.wav`や
 1. [Audio](https://rexrainbow.github.io/phaser3-rex-notes/docs/site/audio/)
 2. [mp3に変換すると無音部分ができてしまう理由](https://ameblo.jp/djdaishizen/entry-11996902609.html)
 
+## PhaserにTwitterへのシェアボタンを追加する
+
+### detail
+
+### reference
+
+1. [Buttons In Phaser 3](https://snowbillr.github.io/blog/2018-07-03-buttons-in-phaser-3/)
+2. [Phaser3でボタンクラスを作る](https://qiita.com/S-Kaito/items/85a1c90c86e61156c87d)
+3. [Twitter シェアボタンの設置方法](https://note.com/ytk141/n/nc76dd06aaff4)

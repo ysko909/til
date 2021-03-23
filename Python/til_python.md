@@ -604,3 +604,110 @@ dtype: int64
 3. [pandas.DataFrame.iloc](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.iloc.html)
 4. [python pandas select both head and tail](https://stackoverflow.com/questions/42504984/python-pandas-select-both-head-and-tail/47958056#47958056)
 5. [pandas DataFrameの出力行を絞るheadとtailを同時に使う](https://qiita.com/u1and0/items/00e1a723da490cd25eb4)
+
+## リストのソート方法まとめ
+
+### detail
+
+Pythonでリストをソートする書き方を、DataFrameのソートと混同するのでメモ。
+
+```python
+>>> hoge = ['foo', 'bar', 'baz']
+>>> sorted(hoge)
+['bar', 'baz', 'foo']
+>>> hoge
+['foo', 'bar', 'baz']
+>>> hoge.sort()
+>>> hoge
+['bar', 'baz', 'foo']
+```
+
+- Pythonでリストをソートする場合、`sorted()`と`sort()`の2通りがある。
+- 違いは新しいリストを返す（`sorted()`）か、もとのリストを変える（`sort()`）かという点。どちらがいいかは、ケースバイケースだと思う。とりあえず`sorted()`を覚えておけばタプルや文字列にも使える（ただし、リストを返すので変換が必要）から、潰しがきくこっちだろうか。
+
+```python
+>>> fuga = 'hogefugapiyo'
+>>> sorted(fuga)
+['a', 'e', 'f', 'g', 'g', 'h', 'i', 'o', 'o', 'p', 'u', 'y']
+>>> ''.join(sorted(fuga))
+'aefgghioopuy'
+>>> piyo = ('foo', 'bar', 'baz')
+>>> sorted(piyo)
+['bar', 'baz', 'foo']
+>>> tuple(sorted(piyo))
+('bar', 'baz', 'foo')
+>>> sorted(piyo, reverse=True)
+['foo', 'baz', 'bar']
+>>> tuple(sorted(piyo, reverse=True))
+('foo', 'baz', 'bar')
+```
+
+- 文字列に対し`sorted()`を実行すると、リストで結果が返ってくるので`join()`を使って連結する。この際、空文字`''`を使って連結すれば単純な文字列に変換できるし、カンマやハイフンなどで連結することも可能。
+- タプルに対し`sorted()`を実行すると、こちらもリストで結果が返ってくるので、`tuple()`を使ってタプルに変換する。
+- なお、`sorted()`の引数に`reverse=True`を指定すると降順になる。
+
+ちなみに、DataFrameやSeriesをソートするのは`sort_values()`。`sort_index()`は行や列のインデックスでソートする。
+
+### reference
+
+1. [Pythonでリストをソートするsortとsortedの違い](https://note.nkmk.me/python-list-sort-sorted/)
+1. [pandas.DataFrame, Seriesをソートするsort_values, sort_index](https://note.nkmk.me/python-pandas-sort-values-sort-index/)
+
+## Pythonでランダムな文字列を生成する方法
+
+### detail
+
+### reference
+
+必要があったので、Pythonでランダムな文字列を生成するプログラムを作った。ホントにただのランダムな文字列。
+
+```python
+import random, string
+
+def get_random_string(length=8, uppercase=True, lowercase=True, digits=True):
+    seed_string = ''
+
+    if uppercase:
+        seed_string += string.ascii_uppercase
+    if lowercase:
+        seed_string += string.ascii_lowercase
+    if digits:
+        seed_string += string.digits
+    
+    if len(seed_string) > 0:
+        result = ''.join([random.choice(seed_string) for i in range(length)])
+    else:
+        result = ''
+
+    return result
+```
+
+内容は簡単で、引数により指定された内容で文字列を一度生成して、その文字列から指定された回数分1文字ランダムで抽出する。
+
+```python
+>>> import string
+>>> string.ascii_lowercase
+'abcdefghijklmnopqrstuvwxyz'
+>>> string.ascii_uppercase
+'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+>>> string.digits
+'0123456789'
+```
+
+`string`で始まる部分は、**文字列定数**と呼ばれている定数で、それぞれ大文字や小文字が格納されている。これらの定数を連結して抽出元の文字列を生成している。
+
+```python
+>>> get_random_string()
+'2TsENwLT'
+>>> get_random_string(length=100, uppercase=True, lowercase=False, digits=True)
+'0LMQ5Z28CHRQUGYMLHVVQX4VJZFZZXR4OBO13AZNCN6RQ4CTLHGVOS26UH6BKSF5EQ1ZJC6MQDQO53R92JEXSQNLWVMWCUELXQ66'
+```
+
+- 実行するときは、引数を一切指定しなければ大文字小文字と数字で8文字分生成する。
+- 大文字や小文字、数字の出力を抑制したい場合は`False`を指定すればいい。文字列長はデフォルトでは8文字。
+- すべての文字を出力対象にしない場合は、文字列長の長さにかかわらず空文字を返す。
+
+### reference
+
+1. [pythonでランダム文字列の生成](https://hacknote.jp/archives/52068/)
+1. [string --- 一般的な文字列操作](https://docs.python.org/ja/3/library/string.html)

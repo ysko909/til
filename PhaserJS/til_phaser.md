@@ -502,12 +502,12 @@ Phaser3自身が対応している再生可能な音声ファイルは`*.wav`や
 
 ```typescript
 type Props = {
-  width?: number;
-  height?: number;
-  onClick?: Function;
-  align?: string;
-  fontSize?: number;
-  color?: string;
+  width: number;
+  height: number;
+  onClick: Function;
+  align: string;
+  fontSize: number;
+  color: string;
 }
 
 class OriginalButtonClass extends Phaser.GameObjects.Container{
@@ -554,8 +554,8 @@ class OriginalButtonClass extends Phaser.GameObjects.Container{
       this.updateButton('pointer down', 'blue');
       this.scene.tweens.add({
         targets: this,
-        scaleX: 0.8,
-        scaleY: 0.9,
+        scaleX: 1.1,
+        scaleY: 1.1,
         duration: 100,
         yoyo: true,
         repeat: 2,
@@ -610,7 +610,6 @@ let game = new Phaser.Game(config);
 game.scene.add('gameScene', gameScene);
 
 game.scene.start('gameScene');
-
 ```
 
 クリックしたときのTweenも設定してみた。

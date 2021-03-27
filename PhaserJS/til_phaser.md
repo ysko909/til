@@ -759,3 +759,13 @@ window.open('http://twitter.com/share?url=https://www.example.com&text=hoge, fug
 3. [Twitter シェアボタンの設置方法](https://note.com/ytk141/n/nc76dd06aaff4)
 1. [Open url in a new new tab Safari](https://www.html5gamedevs.com/topic/40065-open-url-in-a-new-new-tab-safari/)
 2. [Sharing a URL with a query string on Twitter](https://stackoverflow.com/questions/6208363/sharing-a-url-with-a-query-string-on-twitter)
+
+## ローディングシーンを追加するメモ
+
+### detail
+
+今の実装してないので、メモだけ。
+
+### reference
+
+1. [Creating a Preloading Screen in Phaser 3](https://gamedevacademy.org/creating-a-preloading-screen-in-phaser-3/)

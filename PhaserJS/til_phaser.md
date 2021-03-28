@@ -769,3 +769,31 @@ window.open('http://twitter.com/share?url=https://www.example.com&text=hoge, fug
 ### reference
 
 1. [Creating a Preloading Screen in Phaser 3](https://gamedevacademy.org/creating-a-preloading-screen-in-phaser-3/)
+
+## Tiled Map Editorで作ったJSONのマップをPhaserに取り込む方法
+
+### detail
+
+ゲーム画面の作成には[Tiled Map Editor](https://www.mapeditor.org/)を使っているが、これのPhaserへの取り込みは決まった手順があるのでメモしておく。
+
+#### 大雑把な手順
+
+1. Tiledで新しいMapをJSON形式で作成する。
+3. スプライトシートのPNGを取り込む。この際、`Embed in map`に**必ずチェックを入れる**こと。
+4. 衝突させたいオブジェクトがある場合、`collides`プロパティをbool型でスプライトに設定しておく。
+5. マップを作成する。
+6. Phaser側で作成したJSONファイルとPNGファイルを読み込む。
+
+#### Tiledで新しいMapをJSON形式で作成する。
+
+
+
+#### スプライトシートのPNGを取り込む。この際、`Embed in map`に**必ずチェックを入れる**こと。
+#### 衝突させたいオブジェクトがある場合、`collides`プロパティをbool型でスプライトに設定しておく。
+#### マップを作成する。
+#### Phaser側で作成したJSONファイルとPNGファイルを読み込む。
+
+### reference
+
+1. [Grid-Based Movement in a Top-Down 2D RPG With Phaser 3](https://medium.com/swlh/grid-based-movement-in-a-top-down-2d-rpg-with-phaser-3-e3a3486eb2fd)
+1. [Tiledで作成したタイルマップjsonファイルをphaser.jsに読み込む方法](https://www.catch.jp/wiki3/tools/phaser_and_tiled)

@@ -940,3 +940,4 @@ game.scene.start('gameScene');
 ### reference
 
 1. [Phaser.Time. Clock](https://photonstorm.github.io/phaser3-docs/Phaser.Time.Clock.html)
+2. [Timer](https://rexrainbow.github.io/phaser3-rex-notes/docs/site/timer/)

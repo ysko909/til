@@ -941,3 +941,15 @@ game.scene.start('gameScene');
 
 1. [Phaser.Time. Clock](https://photonstorm.github.io/phaser3-docs/Phaser.Time.Clock.html)
 2. [Timer](https://rexrainbow.github.io/phaser3-rex-notes/docs/site/timer/)
+
+## 視差を利用した背景イメージを表示する
+
+### detail
+
+webページのデザインにParallaxというものがある。Parallaxとは「視差」を意味していて、部分ごとに動くスピードや方向に差をつけるようなデザインのこと。これをPhaserで表現する。
+
+もう少し詳しく言うと、たとえば横スクロールアクションゲームにおいて、「超遠い位置にある太陽の位置はプレイヤーに関わらずスクロールしない」けど、「中間に位置する山はプレイヤーの移動速度の半分でスクロールする」し、「手前に位置する地面やブロックなどのオブジェクトはプレイヤーとほぼ変わらない速度でスクロールする」というように、レイヤーやオブジェクトごとに移動速度を個別に設定する。このように移動速度に差を施すことで、Parallaxつまり視差を実現し奥行きを表現する。
+
+### reference
+
+1. [Add Pizazz with Parallax Scrolling in Phaser 3](https://blog.ourcade.co/posts/2020/add-pizazz-parallax-scrolling-phaser-3/)

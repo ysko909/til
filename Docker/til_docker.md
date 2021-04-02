@@ -41,7 +41,7 @@ services:
 - あとは`docker-compose run`するかvscodeで「Reopen in container」すればいい。
 - たとえば[Express.js](https://expressjs.com/)の環境を用意したい場合、以下の手順で簡単に構築できる。
   1. 作成したコンテナ内で`npx express-generator`する。
-  2. `npm install`し、必要なパッケージをすべてインストールする。
+  2. `npm install`し、必要なパッケージをすべてインストールする
   3. `npm start`すればExpress.jsが実行される。ブラウザから`localhost:3000`にアクセスして、Express.jsのテストページが表示されれば構築完了。
 
 ### reference
@@ -59,9 +59,9 @@ docker-compose build --no-cache
 docker-compose up -d --build --force-recreate
 ```
 
-`docker-compose`の場合、上記のようなコマンドを発行するとキャッシュを無視してリビルドしたり、ymlの内容に変更がなくてもイメージの再作成から実行してくれる。
+`docker-compose`の場合、上記のようなコマンドを発行するとキャッシュを無視（`--no-cache`）してリビルドしたり、ymlの内容に変更がなくてもイメージの強制再作成（`--force-recreate`）から実行してくれる。
 
-ところが、場合によってはこれだけでは反映されない場合がある。
+ところが、場合によっては**これだけでは反映されないことがある**。
 
 ```yml
 version: '3'
@@ -110,11 +110,11 @@ volumes:
             PGADMIN_DEFAULT_PASSWORD: hogehoge
 ```
 
-`PGADMIN_DEFAULT_EMAIL`は、pgAdminにログインするメールアドレスを記述する箇所。`PGADMIN_DEFAULT_PASSWORD`は、その名の通りパスワードを記述する箇所。これらについて、`admin@example.com`を`hogehoge@example.com`に変更するなどして、docker-compopse.ymlを変更した。本来であれば、単純にコンテナをリビルドして新しいメールアドレスとパスワードでログインすればいいと思うのだが、なぜか反映されない。つまり変更前のメールアドレスやパスワードでないとpgAdminにログインできない。
+`PGADMIN_DEFAULT_EMAIL`は、pgAdminにログインするメールアドレスを記述する箇所。`PGADMIN_DEFAULT_PASSWORD`は、その名の通りパスワードを記述する箇所。これらについて、`admin@example.com`を`hogehoge@example.com`に変更するなどして、docker-compopse.ymlを更新した。本来であれば、単純にコンテナをリビルドして新しいメールアドレスとパスワードでログインすればいいと思うのだが、なぜか反映されない。つまり変更前のメールアドレスやパスワードでないとpgAdminにログインできない。
 
-`environment`はただの環境変数で、ここではpgAdminのコンテナを立ち上げる際の初期設定にしか利用していないので、そもそもイメージの再取得が必要ないと思うのだが何故か反映されない。`docker-compose down --rmi all`などでイメージの削除を行ってから、再度`pull`しても駄目。
+`environment`はコンテナ内で利用する単なる環境変数で、ここではpgAdminのコンテナを立ち上げる際の初期設定にしか利用していないはず。`docker-compose down --rmi all`などでイメージの削除を行ってから、再度`pull`しても駄目。そもそもイメージの再取得は必要なく、`docker-compose up --build -d`とかでいいと思うのだがどちらにせよ何故か反映されない。
 
-原因は**volumeにゴミが残っていた**こと。volumeの内容は、コンテナをリビルドしたりイメージを削除するだけでは消えない。「volumeの内容を削除する」コマンドを発行しないかぎり残り続ける。ログインの情報がvolume側に残存していたため、いくらコンテナをリビルドしてもイメージを再取得しても反映されなかったわけだ。
+原因は**volumeにゴミが残っていた**こと。volumeの内容は、コンテナをリビルドしたりイメージを削除するだけでは消えない。「volumeの内容を削除する」コマンドを発行しないかぎり残り続ける。つまり、ログインに必要なアカウント情報がvolume側に残存していたため、いくらコンテナをリビルドして新しい環境変数にしてもイメージを再取得しても、それらは残存し続けるvolumeには関係ないため反映されなかったわけだ。
 
 ```console
 docker volume ls
@@ -123,6 +123,9 @@ docker volume rm hogehoge
 
 `docker volume ls`で、volumeの一覧が参照できる。このうち削除したいvolumeを`docker volume rm hogehoge`で指定する。これでvolumeが削除できる。
 
+一応注意点は、volumeを削除することはそのコンテナで利用していたデータボリュームを削除することになるので、重要なデータは事前に別コンテナなどに退避させる必要がある。コンテナを作ったばっかりならいいかもしれないが、ある程度運用しているようなコンテナについてvolumeをいじる場合は気をつけたい。
+
 ### reference
 
-1. []()
+1. [Use volumes](https://docs.docker.com/storage/volumes/)
+1. [Dockerのイメージ、コンテナおよびボリュームを削除する方法](https://www.digitalocean.com/community/tutorials/how-to-remove-docker-images-containers-and-volumes-ja)

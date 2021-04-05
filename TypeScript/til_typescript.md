@@ -680,3 +680,28 @@ const foo = <T extends unknown>(x: T) => x; // 古いTypeScriptではこのよ�
 1. [【TypeScript】Generics(ジェネリックス)を理解する](https://qiita.com/k-penguin-sato/items/9baa959e8919157afcd4)
 2. [ジェネリクス](http://js.studio-kingdom.com/typescript/handbook/generics)
 3. [What is the syntax for Typescript arrow functions with generics?](https://stackoverflow.com/questions/32308370/what-is-the-syntax-for-typescript-arrow-functions-with-generics)
+
+## 関数の引数にオブジェクトを指定する方法
+
+### detail
+
+関数の引数にオブジェクトを指定する場合の方法について記述する。
+
+```typescript
+const func = (arg:{x: string, y: string, z: string}): string => arg.x + arg.y + arg.z;
+
+const func2 = (arg:{x: number, y: number, z: string}, arg2: string) => {
+    return arg.x.toString() + arg.y.toString() + arg.z + arg2;
+}
+
+console.log(func({x:'foo', y: 'bar', z: 'baz'}));
+
+console.log(func2({x: 1, y: 2, z: 'funcfunc'}, 'fugafuga'));
+```
+
+引数のオブジェクト自体に名前をつけ、各プロパティにそれぞれ型情報を付与する。引数を参照する場合は、`オブジェクトの名前.プロパティ名`で参照できる。このように、基本的には普段のTypeScriptの書き方で問題ない。
+
+### reference
+
+1. [Object types](https://www.typescriptlang.org/docs/handbook/2/objects.html)
+2. [TypeScriptの関数を振り返る](https://qiita.com/pochopocho13/items/c92cba15be3f6a1b29a6)

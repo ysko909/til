@@ -201,6 +201,57 @@ Object {
 - 親クラスのメンバ関数を呼び出す場合、`super.`構文で呼び出せる。なお、上記のコードでは`Fuga`クラスにおいて親クラス`Hoge`のメンバ関数`add()`を呼び出す場合、**処理内容や戻り値は親クラスに記述されている内容に準拠する**。よって、`supeer.add()`を呼び出す`add_fuga_super()`の戻り値は、`Fuga`クラスではなく`Hoge`クラスであることに注意。
 - ちなみに上記のコードはCodepenのTypeScript環境で実行している。`add_fuga_super()`の戻り値が`Hoge`クラスであるにもかかわらず、変数宣言時に`Fuga`クラスであると宣言しているが、これはエラーにならない。そういうものなのか・・・（`Fuga`を`Hoge`や`Piyo`に書き換えてもエラーとかにはならなかったので、少なくともCodepenのTS環境はこういうものらしい）。
 
+```typescript
+class GameScene extends Phaser.Scene {
+    constructor(sceneName) {
+        super(sceneName);
+    }
+
+    preload() {
+
+    }
+
+    create() {
+      this.add.text(100, 100, 'hoge');
+
+    }
+}
+
+class MainScene extends GameScene {
+    constructor() {
+        super('mainScene');
+    }
+
+    preload() {
+
+    }
+
+    create() {
+      super.create(); // `super.method()`とすると基底クラスのメソッドを実行する
+      this.add.text(200, 200, 'fuga');
+    }
+}
+
+let mainScene = new MainScene();
+
+let config = {
+    type: Phaser.AUTO,
+    width: 800,
+    height: 600,
+    backgroundColor: '#e0e0e0'
+};
+
+let game = new Phaser.Game(config);
+
+game.scene.add('mainScene', mainScene);
+
+game.scene.start('mainScene');
+```
+
+- `extends`した派生クラス内で、基底クラスのpublicメソッドを利用する場合は`super.method()`と記述すると実行できる。
+- 上記の例では、基底クラス側で「hoge」という文字列を、派生クラス側で「fuga」という文字列を表示している。`super.create()`を実行しない場合、「fuga」のみが画面に表示される。これは、基底クラスにあったpublicメソッドである`create()`を、派生クラス側でオーバーライドしているため。
+- [オーバーライド](https://en.wikipedia.org/wiki/Method_overriding)は乱暴に要約すると、メソッド名や引数はそのままに、派生クラス側で処理内容を上書きしてしまうこと。ここでは、基底クラスの`create()`メソッドが「hoge」を表示するという処理であるのに対し、派生クラスの`create()`は同じメソッド名でありながら「fuga」を表示する処理に置き換わっている。そのままだと基底クラス側の`create()`は実行されない。オーバーライドされる前のメソッドを実行するためには、上記の通り`super.create()`と記述して、**基底クラス側の**`create()`を実行するよと明示する必要がある。
+
 ### reference
 
 1. [クラス](https://typescript-jp.gitbook.io/deep-dive/future-javascript/classes)

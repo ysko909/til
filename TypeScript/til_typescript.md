@@ -950,7 +950,7 @@ f2('ham', 'eggs', 'spam');
 "spam" 
 ```
 
-関数実行時、引数を指定したいだけ指定すればよく、配列化してから引数として渡す必要もない。
+関数実行時、引数を指定したいだけ指定すればよいので、「配列化してから引数として渡す」などの前処理が必要ない。
 
 ```typescript
 const f = (...arg: Array<number | string | boolean>) => {
@@ -968,9 +968,20 @@ const f = (...arg: Array<number | string>) => {
     arg.forEach(item => console.log(item));
 }
 
-let hoge = [1, 2, 'ham', 3, 'eggs', 'spam'];
+let foo = [1, 2, 'ham', 3, 'eggs', 'spam'];
 
-f(...hoge);
+f(...foo);
+
+const hoge = [1];
+const fuga = [4, 5];
+
+const f2 = (...arg: Array<number>) => {
+    let sum = arg.reduce((total, value) => total += value);
+    return sum;
+}
+
+console.log(f2(...hoge));
+console.log(f2(...fuga));
 
 ```
 
@@ -984,14 +995,12 @@ const f2 = (...arg?: string[]) => { // error "A rest parameter cannot be optiona
 
 ちなみに、Rest引数もオプション扱いできない。
 
-なお、TypeScriptは
-
 ### reference
 
 1. [More on functions](https://www.typescriptlang.org/docs/handbook/2/functions.html)
 2. [TypeScript プログラミング -関数 -引数](https://docs.solab.jp/typescript/function/parameter/)
 
-## TypeScriptでは配列は不変のものとして扱われない仕様
+## TypeScriptでは配列はconstで宣言しても不変のものとして扱われない
 
 ### detail
 
@@ -1005,7 +1014,9 @@ console.log(Math.sin(...hoge)); // error "Expected 1 arguments, but got 0 or mor
 console.log(Math.atan2(...fuga)); // error "Expected 2 arguments, but got 0 or more."
 ```
 
-少なくとも、1つ以上の要素を含む配列をスプレッド構文で展開しているので、0個の引数指定ということはないはず。なのに、TypeScriptの処理系は引数の指定が0個と見なしている。これはなぜか。
+`Math.sin()`は1つの引数を取り、`Math.atan2()`は2つの引数を取る関数。
+
+どちらも、少なくとも1つ以上の要素を含む配列をスプレッド構文で展開して引数として指定しているので、0個の引数指定ということはないはず。なのに、TypeScriptの処理系は引数の指定が0個と見なしている。これはなぜか。
 
 TypeScriptは配列の要素が不変であることを**前提にしていない**ため、「今はたまたま要素がいるかもしれんけど、いないこともあるんでない？配列だもの」（誇張表現）と解釈するのか、スプレッド構文で展開したにもかかわらず「引数が0個」として処理する。`const`で変数宣言していたとしても`push`などで要素の操作は可能なため、配列は可変であると扱っているようだ。
 

@@ -711,3 +711,356 @@ def get_random_string(length=8, uppercase=True, lowercase=True, digits=True):
 
 1. [pythonでランダム文字列の生成](https://hacknote.jp/archives/52068/)
 1. [string --- 一般的な文字列操作](https://docs.python.org/ja/3/library/string.html)
+
+## リスト内包表記の記述方法についてまとめ
+
+### detail
+
+```python
+[変数に行う処理 for 変数 in リストなどのイテレータ]
+```
+
+リスト内包表記は、何かしらの処理を実行しつつ新しいリストを生成した場合に用いる。
+
+```python
+>>> [i * 3 for i in range(1, 5)]
+[3, 6, 9, 12]
+>>> hoge = []
+>>> for i in range(1, 5):
+...   hoge.append(i * 3)
+... 
+>>> hoge
+[3, 6, 9, 12]
+```
+
+例として、3の倍数でリストを作成する方法を考えると上記のように記述できる。ループのもとになるイテレータは既存のものでもいいし、`range()`で生成したものでもいい。`append()`を利用して要素を追加する方法より、記述量が少なくて可読性がよい。表記方法も、角かっこで囲ってあって「リストが出力される」と直感的に理解しやすい。ループ部分もまんま`for`文なので、こちらも理解しやすい。
+
+```python
+>>> hoge = 'foobarbaz'
+>>> hoge.count('o')
+2
+>>> [hoge.count(s) for s in ['o', 'ba', 'oo']]
+[2, 2, 1]
+```
+
+上記の例は、ある文字列において含まれているであろう文字をリストにして、それぞれがいくつ含まれているか個数をリストで返すコード。`string.count()`は引数に指定された文字や文字列が、元の文字列の中で何回出現するかをカウントするメソッド。
+
+```python
+[変数に行う処理 for 変数 in イテレータ if 条件式]
+```
+
+処理を行う要素について任意の条件を付与したい場合は、上記のような`if`を付与したリスト内包表記を用いる。
+
+```python
+>>> [i ** 2 for i in range(10) if i % 2 == 0]
+[0, 4, 16, 36, 64]
+```
+
+例として、偶数のみ2乗するリスト内包表記を書いてみた。要素のうち、2の余剰がゼロになる（偶数）という条件が成立する要素のみ対象とする、という条件を`if`部分に記述することで、処理対象の要素を限定できる。
+
+### reference
+
+1. [Pythonリスト内包表記の使い方](https://note.nkmk.me/python-list-comprehension/)
+1. [リスト内包表記の活用と悪用](https://qiita.com/KTakahiro1729/items/c9cb757473de50652374)
+
+## Pythonでpandas.DataFrameに対し統計量を取得する`describe()`を実行するときの注意点について
+
+### detail
+
+ゼロを含んだDataFrameで`describe()`を実行したい場合、**ケースによっては**一度ゼロを除外する方がいい。ゼロが意味を持つデータならいいが、意味を持たない（欠損値と変わらない）ようなデータの場合、ゼロを含んだ状態で統計量を出すと、本来の意味とは異なる統計量が出てきてしまう。とくに最小値が必ずゼロになってしまうため、標準偏差もゼロを含んだ場合と含まない場合で差が出てくる。
+
+```python
+df.describe()
+df[df > 0.0].describe()
+```
+
+`df`がゼロを含むデータであった場合、1行目と2行目の結果は異なる。`df[df > 0.0]`の場合、ゼロはデータとして抽出されないためNaNになる。`describe()`は**NaNを無視する**ため、2行目は1行目のゼロを含んだ結果と異なる結果を出力する。
+
+### reference
+
+1. [pandasのdescribeで各列の要約統計量（平均、標準偏差など）を取得](https://note.nkmk.me/python-pandas-describe/)
+
+## Pythonでラムダ式に複数の引数を設定する方法について。
+
+### detail
+
+ラムダ式に複数の引数を設定する場合、単純に「引数設定の際に複数の引数を記述」すればいい。`def`による関数宣言を同様に、引数の初期値設定が可能。
+
+```python
+>>> hoge = lambda a, b=2: a * b
+>>> hoge(1)
+2
+>>> hoge(1, 3)
+3
+>>> hoge()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: <lambda>() missing 1 required positional argument: 'a'
+>>> hoge(b=100, a=4)
+400
+>>> 
+```
+
+上記の場合、引数bに2が初期設定されているため、引数aだけ指定してやれば実行可能。引数が指定されなければエラーになるのも、`def`による関数宣言と同じ。
+
+### reference
+
+1. [Pythonのlambda（ラムダ式、無名関数）の使い方](https://note.nkmk.me/python-lambda-usage/)
+
+## pandasのDataFrameで既存列の値を利用して新しい列を新規追加する方法
+
+### detail
+
+DataFrameの既存列に格納されている値を使用して、何らかの計算を行って結果を新しい列に格納したい。その場合は、`DataFrame.apply()`を使ってラムダ式を`axis=1`のオプションとともに実行することで実現できる。
+
+```python
+>>> import pandas as pd
+>>> import numpy as np
+>>> import random
+>>> input_data = np.arange(30)
+>>> input_data = map(lambda x: x * round(random.random(), 1), input_data)
+>>> input_data = list(input_data)
+>>> len(input_data)
+30
+>>> df = pd.DataFrame(np.array(input_data).reshape(10, 3), columns=['foo', 'bar', 'baz'])
+>>> df.head()
+   foo  bar  baz
+0  0.0  0.9  1.6
+1  2.1  3.6  2.0
+2  5.4  0.0  0.8
+3  2.7  9.0  6.6
+4  1.2  3.9  9.8
+>>> df['hoge'] = df.apply(lambda x: x['foo'] + x['bar'] + x['baz'], axis=1)
+>>> df.head()
+   foo  bar  baz  hoge
+0  0.0  0.9  1.6   2.5
+1  2.1  3.6  2.0   7.7
+2  5.4  0.0  0.8   6.2
+3  2.7  9.0  6.6  18.3
+4  1.2  3.9  9.8  14.9
+```
+
+テストデータは、numpyとrandomを使って任意の値を用意する。
+
+`df.apply(lambda x: x['foo'] + x['bar'] + x['baz'], axis=1)`とすることで、既存列（`axis=1`のオプションで、処理対象が行であると指定している。指定しないか、`axis=0`の場合は列が対象になる）の値を使って、ラムダ式に記述した処理を**全行に対し**行う、という意味になる。つまり、ラムダ式の引数xには**各行が1つずつ入力**され、各行の項目列である**fooとbarとbazの値を加算しろ**、という処理になる。この結果はSeries形式で返ってくるので、任意の名前を付けて新規列として既存のDataFrameに追加が可能。
+
+```python
+>>> df.apply(lambda x: max(x))
+foo     27.0
+bar     17.6
+baz     20.8
+hoge    47.7
+dtype: float64
+```
+
+`axis=1`を指定しない場合は、処理の対象が列になる。つまり、ラムダ式の引数xに**各列が1つずつ入力**される。ここの挙動が上記と異なるところ。上記では`max()`を使って、各列における最大値を取得している。処理対象を列であるため、各列における最大値が出力されている。
+
+### reference
+
+1. [pandas.DataFrame.apply](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.apply.html)
+1. [Pandasで複数の列を値をもとに、新しい列を任意の関数で定義する方法](https://blog.shikoan.com/pandas-newcolumn-lambda/)
+
+## matplotlibで描画したグラフに、補助線を追加する方法
+
+### detail
+
+matplotlibで描画したグラフに、説明のためなどで補助線を描画したい場合は、水平線なら`hlines()`、垂直線なら`vlines()`を利用する。
+
+```python
+sns.lineplot(x=df.index, y=sensor_df['saturation'])
+plt.hlines(y=3, xmin=df.index[0], xmax=df.index[-1], linestyles='--', colors='red')
+plt.hlines(y=6, xmin=df.index[0], xmax=df.index[-1], linestyles='--', colors='red')
+plt.show()
+```
+
+もちろん、複数の線を出力することも可能。単純に描画したい数だけ、コードを書いてやればいい。
+
+### reference
+
+1. [Matplotlib で水平線と垂直線をプロットする方法](https://www.delftstack.com/ja/howto/matplotlib/how-to-plot-horizontal-and-vertical-line-in-matplotlib/)
+
+## matplotlibで描画したグラフのX軸とY軸の幅を調査する方法
+
+### detail
+
+matplotlibでグラフを描画した際、グラフのX軸とY軸がそれぞれどのくらいのレンジ（幅）で描画されているかを調べたい場合は、`xlim()`と`ylim()`を実行する。
+
+```python
+sns.lineplot(x=df.index, y=df['hoge'])
+print(plt.xlim())
+print(plt.ylim())
+plt.show()
+```
+
+```console
+(18107.05, 18479.95)
+(1.0695084678691622, 12.550942168141958)
+```
+
+グラフを描画する際、とくに指定しなければmatplotlibが自動で、指定されたデータの最大値および最小値が十分に収まるような、適当な幅をX軸とY軸に設定しグラフを出力する。この際、X軸とY軸の出力幅を変えたければ`xlim(x軸の最小値, x軸の最大値)`や`ylim(y軸の最小値, y軸の最大値)`といった指定を行う。
+
+ところが、日付などを出力の軸にしていえる場合、その最大値や最小値の具体的な数値がわからない場合がある。データ上の最大値や最小値を参照してもよいが、たとえば「出力したグラフに補助線を引きたい」という場合、補助線を引きたい座標の**具体的な数値**を指定しなければならない。日付はあくまでも**見た目のラベルであって座標ではない**ので、日付指定による補助線の座標指定はできない。その場合、描画されているグラフのX軸とY軸の最大値と最小値の具体的な数値を取得し、その数字に則って座標を決めることで補助線の座標を指定できる。
+
+```python
+import matplotlib.patches as patches
+
+sns.lineplot(x=df.index, y=df['hoge'])
+e = patches.Rectangle(xy=(18105, 3) , width=18470, height=3, ec='#523245', fill=True, alpha=0.3, color='r')
+ax = plt.axes()
+ax.add_patch(e)
+plt.show()
+```
+
+上記では、取得した座標に則って四角を`Rectangle()`関数で描画し、グラフに出力している。
+
+### reference
+
+1. [Matplotlibで円や長方形などの図形を描画](https://note.nkmk.me/python-matplotlib-patches-circle-rectangle/)
+
+## pandasl.DataFrameで差分を取る方法
+
+### detail
+
+DataFrameのデータにおいて、データ間の差分を取得したい場合は`diff()`を使う。
+
+```python
+>>> quit()
+root@25d8182164be:/workspaces/env_2020# python
+Python 3.8.5 (default, Aug  4 2020, 16:24:08) 
+[GCC 8.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import pandas as pd
+>>> import io
+>>> s = '''a,b,c
+... 1,2,3
+... 1,3,5
+... 3,6,9
+... 9,8,7
+... 10,0,1
+... '''
+>>> df = pd.read_csv(io.StringIO(s))
+>>> df
+    a  b  c
+0   1  2  3
+1   1  3  5
+2   3  6  9
+3   9  8  7
+4  10  0  1
+>>> df.diff()
+     a    b    c
+0  NaN  NaN  NaN
+1  0.0  1.0  2.0
+2  2.0  3.0  4.0
+3  6.0  2.0 -2.0
+4  1.0 -8.0 -6.0
+```
+
+引数なしでは、行ごとに「1行前のデータと比較して、差分を各項目列ごとに取得」する。結果の1行目は全項目がNaNになっているが、これは「0行目との比較はできない」ため。
+
+```python
+>>> df.diff(2)
+     a    b    c
+0  NaN  NaN  NaN
+1  NaN  NaN  NaN
+2  2.0  4.0  6.0
+3  8.0  5.0  2.0
+4  7.0 -6.0 -8.0
+>>> df.diff(3)
+     a    b    c
+0  NaN  NaN  NaN
+1  NaN  NaN  NaN
+2  NaN  NaN  NaN
+3  8.0  6.0  4.0
+4  9.0 -3.0 -4.0
+>>> df.diff(-2)
+     a    b    c
+0 -2.0 -4.0 -6.0
+1 -8.0 -5.0 -2.0
+2 -7.0  6.0  8.0
+3  NaN  NaN  NaN
+4  NaN  NaN  NaN
+>>> df.diff(-1)
+     a    b    c
+0  0.0 -1.0 -2.0
+1 -2.0 -3.0 -4.0
+2 -6.0 -2.0  2.0
+3 -1.0  8.0  6.0
+4  NaN  NaN  NaN
+```
+
+引数`periods`を指定すると、何行前のデータと差分を取るか指定できる。`2`であれば、2行前のデータを差分を取る。デフォルトでは1行前と差分を取る。
+
+```python
+>>> df.diff(axis=1)
+    a     b    c
+0 NaN   1.0  1.0
+1 NaN   2.0  2.0
+2 NaN   3.0  3.0
+3 NaN  -1.0 -1.0
+4 NaN -10.0  1.0
+>>> df.diff(axis=0)
+     a    b    c
+0  NaN  NaN  NaN
+1  0.0  1.0  2.0
+2  2.0  3.0  4.0
+3  6.0  2.0 -2.0
+4  1.0 -8.0 -6.0
+```
+
+引数`axis`を指定すると、差分を取る方向を指定できる。デフォルトは0で、行方向に差分を取る。`axis=1`とすると、列方向に差分を取る。
+
+変化率を取得したい場合は`pct_change()`を使う。
+
+```python
+>>> df.pct_change()
+          a         b         c
+0       NaN       NaN       NaN
+1  0.000000  0.500000  0.666667
+2  2.000000  1.000000  0.800000
+3  2.000000  0.333333 -0.222222
+4  0.111111 -1.000000 -0.857143
+```
+
+`diff()`とは異なるのは出力が差分ではなく変化率である点だけで、使い方は`diff()`と一緒。
+
+```python
+>>> df.pct_change(2)
+          a         b         c
+0       NaN       NaN       NaN
+1       NaN       NaN       NaN
+2  2.000000  2.000000  2.000000
+3  8.000000  1.666667  0.400000
+4  2.333333 -1.000000 -0.888889
+>>> df.pct_change(-1)
+          a         b         c
+0  0.000000 -0.333333 -0.400000
+1 -0.666667 -0.500000 -0.444444
+2 -0.666667 -0.250000  0.285714
+3 -0.100000       inf  6.000000
+4       NaN       NaN       NaN
+```
+
+引数`periods`の設定方法も一緒。マイナスが利用できるところも同じ。
+
+```python
+>>> df.pct_change(axis=1)
+    a         b         c
+0 NaN  1.000000  0.500000
+1 NaN  2.000000  0.666667
+2 NaN  1.000000  0.500000
+3 NaN -0.111111 -0.125000
+4 NaN -1.000000       inf
+>>> df.pct_change(axis=0)
+          a         b         c
+0       NaN       NaN       NaN
+1  0.000000  0.500000  0.666667
+2  2.000000  1.000000  0.800000
+3  2.000000  0.333333 -0.222222
+4  0.111111 -1.000000 -0.857143
+```
+
+引数`axis`の設定方法も一緒。
+
+### reference
+
+1. [pandasで行・列の差分・変化率を取得するdiff, pct_change](https://note.nkmk.me/python-pandas-diff-pct-change/)

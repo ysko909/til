@@ -780,7 +780,7 @@ df[df > 0.0].describe()
 
 1. [pandasのdescribeで各列の要約統計量（平均、標準偏差など）を取得](https://note.nkmk.me/python-pandas-describe/)
 
-## Pythonでラムダ式に複数の引数を設定する方法について。
+## Pythonでラムダ式に複数の引数を設定する方法
 
 ### detail
 

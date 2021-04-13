@@ -194,7 +194,7 @@ docker logs --tail 50 --follow --timestamps postgres_hoge
 上記のコマンドを実行すると、指定したコンテナ（上記だと`postgres_hoge`コンテナを指す）のログの最新50件分を表示する。大抵の場合、このログを見てみることで何かしらのエラーログを見つけられるはず。
 
 ```console
-initdb: error: superuser name "pg_sonar_admin" is disallowed; role names cannot begin with "pg_"
+initdb: error: superuser name "pg_hoge_admin" is disallowed; role names cannot begin with "pg_"
 ```
 
 この場合、PostgreSQLを構築する際に「pg_hoge_admin」というユーザーを追加しようとしているが、頭に「pg_」が付くスキーマは**システムが利用するため予約されて**おり新規に割り当てることはできない。「その名前は使えないぜ！」とエラーになっていたわけだ。これがエラーの根本原因だが、このエラーはdocker-compose.ymlを編集しない限り解消しない。Dockerはコンテナ起動に失敗してもとりあえずそのままの状態でリスタートするので、コンテナの起動ごとにこのエラーが発生し続ける。よって、コンテナの起動に失敗し続け「Restarting」から抜け出せなくなっていた。今回の場合はユーザー名を変更し、「pg_」のないユーザー名でユーザー追加を行うことで事なきを得た。

@@ -1003,11 +1003,15 @@ graphics.fillRoundedRect(360, 240, 400, 300, { tl: 64, tr: 22, bl: 12, br: 0 });
 1. [Phaser.GameObjects. Graphics](https://photonstorm.github.io/phaser3-docs/Phaser.GameObjects.Graphics.html#fillRoundedRect__anchor)
 2. [Fill Rounded Rectangle](https://www.phaser.io/examples/v3/view/game-objects/graphics/fill-rounded-rectangle)
 
-## Containerを削除する方法はdestroy()を実行する
+## 複数のオブジェクトを管理するにはContainerオブジェクトを利用する
 
 ### detail
 
-複数項目
+スプライトやその他のゲームオブジェクトを複数配置した際、これらを1つのオブジェクトとして管理したい場合にContainerオブジェクトにまとめる方法がある。たとえばアイテム画面などで、左側にカテゴリの一覧を表示し、右側に各カテゴリのアイテムを個数とともに表示し、その下側に選択したアイテムの説明を表示するという画面を作るとする。この場合、カテゴリ・アイテム・説明の各欄は別に管理するよりまとめて1つのオブジェクト「アイテムメニュー」として管理した方が、メニュー画面を生成するのも破棄するのも個別に実行する必要がないので簡単。
+
+ここでは、`Container`オブジェクトへの子要素登録と破棄方法について記述する。
+
+オブジェクト`Phaser.GameObjects.Container`を破棄する場合、`destroy()`を実行する。
 
 ### reference
 

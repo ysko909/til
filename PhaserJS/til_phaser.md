@@ -1002,3 +1002,15 @@ graphics.fillRoundedRect(360, 240, 400, 300, { tl: 64, tr: 22, bl: 12, br: 0 });
 
 1. [Phaser.GameObjects. Graphics](https://photonstorm.github.io/phaser3-docs/Phaser.GameObjects.Graphics.html#fillRoundedRect__anchor)
 2. [Fill Rounded Rectangle](https://www.phaser.io/examples/v3/view/game-objects/graphics/fill-rounded-rectangle)
+
+## Containerを削除する方法はdestroy()を実行する
+
+### detail
+
+複数項目
+
+### reference
+
+1. [Phaser.GameObjects.Container](https://photonstorm.github.io/phaser3-docs/Phaser.GameObjects.Container.html)
+
+

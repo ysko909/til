@@ -1011,7 +1011,96 @@ graphics.fillRoundedRect(360, 240, 400, 300, { tl: 64, tr: 22, bl: 12, br: 0 });
 
 ここでは、`Container`オブジェクトへの子要素登録と破棄方法について記述する。
 
-オブジェクト`Phaser.GameObjects.Container`を破棄する場合、`destroy()`を実行する。
+```typescript
+class Rectangles extends Phaser.GameObjects.Container{
+  constructor(scene){
+    super(scene);
+    
+    this.scene = scene;
+    this.scene.add.existing(this);
+    
+    const {width, height} = this.scene.game.canvas;
+    
+    const margin = 10;
+    let background = this.scene.add.rectangle(0 + margin, 0 + margin, width - margin, height - margin, 0x111111);
+    background.setOrigin(0, 0);
+    
+    this.add(background); // add gameobject to container
+    
+    let recs = [];
+    let ellipses = [];
+    
+    for (let i=0; i<10; i++){
+      
+      let rec = this.scene.add.rectangle(Phaser.Math.Between(0, width), Phaser.Math.Between(0, height), 100, 100, 0x542342);
+      rec.setOrigin(0, 0);
+      recs.push(rec);
+      
+      let ellipse = this.scene.add.ellipse(Phaser.Math.Between(0, width), Phaser.Math.Between(0, height), 100, 100, 0x12a797);
+      ellipse.setOrigin(0, 0);
+      ellipse.setInteractive();
+      ellipse.on('pointerdown', ()=>{
+        ellipse.input.enabled = false;
+        // ellipse.setVisible(false);
+        ellipse.destroy();
+      });
+      ellipses.push(ellipse);
+      
+    }
+     
+    this.add(recs); // add rectangles to container
+    this.add(ellipses);
+    
+    this.timerOneShot = this.scene.time.delayedCall(5000, ()=>{
+      console.log(ellipses.length);
+      this.destroy();
+    }, this);
+    
+  }
+    
+}
+
+class GameScene extends Phaser.Scene {
+    constructor() {
+        super('GameScene');
+    }
+
+    preload() {
+
+    }
+
+    create() {
+
+      this.container = new Rectangles(this);
+      
+    }
+  
+  update(){
+    
+  }
+  
+}
+
+let gameScene = new GameScene();
+
+let config = {
+    type: Phaser.AUTO,
+    width: 800,
+    height: 600,
+    backgroundColor: '#e0e0e0'
+};
+
+let game = new Phaser.Game(config);
+
+game.scene.add('GameScene', gameScene);
+
+game.scene.start('GameScene');
+
+```
+
+上記のコードは、実行すると円と四角を10個ランダムな位置に生成する。生成から5秒後、背景の四角を含んで画面上のオブジェクトが消失する。この際、画面からオブジェクトを消す処理をしているのは、複数のゲームオブジェクトを個別に削除しているわけではなく、それらを登録したコンテナを削除する処理を**1回だけ実行している**。複数のオブジェクトをコンテナに登録することで、削除する際はコンテナを1回破棄すればいいのでオブジェクトの管理が楽になる。
+
+また、円のオブジェクトはコンテナを破棄するタイミングまでクリックを受け付けており、クリックされると画面から消える。これは**個別のオブジェクトに対し実行している**のが前述のコンテナの処理と異なるところ。どちらも`destroy()`というメソッドを実行することで実装できる。
 
 ### reference
 

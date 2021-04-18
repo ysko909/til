@@ -1100,10 +1100,19 @@ game.scene.start('GameScene');
 
 上記のコードは、実行すると円と四角を10個ランダムな位置に生成する。生成から5秒後、背景の四角を含んで画面上のオブジェクトが消失する。この際、画面からオブジェクトを消す処理をしているのは、複数のゲームオブジェクトを個別に削除しているわけではなく、それらを登録したコンテナを削除する処理を**1回だけ実行している**。複数のオブジェクトをコンテナに登録することで、削除する際はコンテナを1回破棄すればいいのでオブジェクトの管理が楽になる。
 
+コンテナへゲームオブジェクトを登録するには、まずゲームオブジェクトをシーンに対して生成してから`add()`を実行する。上記だと`this.add(background);`などがその処理に当たる。引数は単一のオブジェクトに限らず、配列を渡してもよい。これでコンテナにゲームオブジェクトが登録できるので、コンテナに対し`destroy()`を実行してコンテナを破棄すると、登録済みのゲームオブジェクトも一緒に破棄できる。
+
 また、円のオブジェクトはコンテナを破棄するタイミングまでクリックを受け付けており、クリックされると画面から消える。これは**個別のオブジェクトに対し実行している**のが前述のコンテナの処理と異なるところ。どちらも`destroy()`というメソッドを実行することで実装できる。
 
 ### reference
 
 1. [Phaser.GameObjects.Container](https://photonstorm.github.io/phaser3-docs/Phaser.GameObjects.Container.html)
+2. [Phaser.GameObjects.Rectangle](https://photonstorm.github.io/phaser3-docs/Phaser.GameObjects.Rectangle.html)
+3. [Phaser.Input.InputPlugin](https://photonstorm.github.io/phaser3-docs/Phaser.Input.InputPlugin.html)
+4. [Registry Data Exchange Es6](https://phaser.io/examples/v3/view/scenes/registry-data-exchange-es6)
+   ちなみに上記のサンプルはなにか挙動がおかしくて、「赤いオブジェクトをクリックしたらペナルティ」なはずなのだが、ペナルティの処理が正常に動作しておらず通常と同じく得点として処理されている。
+6. [setInteractive() on a whole group](https://www.html5gamedevs.com/topic/36248-setinteractive-on-a-whole-group/)
+
+
 
 

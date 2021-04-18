@@ -1110,9 +1110,5 @@ game.scene.start('GameScene');
 2. [Phaser.GameObjects.Rectangle](https://photonstorm.github.io/phaser3-docs/Phaser.GameObjects.Rectangle.html)
 3. [Phaser.Input.InputPlugin](https://photonstorm.github.io/phaser3-docs/Phaser.Input.InputPlugin.html)
 4. [Registry Data Exchange Es6](https://phaser.io/examples/v3/view/scenes/registry-data-exchange-es6)
-   ちなみに上記のサンプルはなにか挙動がおかしくて、「赤いオブジェクトをクリックしたらペナルティ」なはずなのだが、ペナルティの処理が正常に動作しておらず通常と同じく得点として処理されている。
+   ちなみにこのサンプルはなにか挙動がおかしくて、「赤いオブジェクトをクリックしたらペナルティ」なはずなのだが、ペナルティの処理が正常に動作しておらず通常と同じく得点として処理されている。
 6. [setInteractive() on a whole group](https://www.html5gamedevs.com/topic/36248-setinteractive-on-a-whole-group/)
-
-
-
-

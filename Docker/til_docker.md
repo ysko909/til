@@ -270,4 +270,50 @@ $ docker network inspect bridge
 2. [参考訳：Docker コンテナ・ネットワークの理解](https://qiita.com/zembutsu/items/1da05cb6a60e1c5acc25)
 3. [【Docker】任意のネットワークを作成してコンテナ間通信をする手順](https://genchan.net/it/virtualization/docker/10601/)
 
+## コンテナ内で作成したファイルをホストで操作する場合権限でエラーになるケースがある
 
+### detail
+
+`VOLUME`を使ってホストのフォルダをコンテナにマウントすることで、コンテナ内でホストのファイルを使ったり、コンテナ内で作成したファイルをホストで操作できる。ただし、後者の場合はファイルのowner権限を考慮しておかないと問題が起きる。
+
+```console
+sampleusr@foohost:~/foo$ id
+uid=1000(sampleusr) gid=9999(testgr) groups=9999(testgr),999(docker)
+sampleusr@foohost:~/foo$ mkdir hoge && touch hoge/hoge.txt
+sampleusr@foohost:~/foo$ ls -al hoge
+total 8
+drwxr-xr-x 2 sampleusr testgr 4096  4月 20 16:41 .
+drwxr-xr-x 4 sampleusr testgr 4096  4月 20 16:41 ..
+-rw-r--r-- 1 sampleusr testgr    0  4月 20 16:41 hoge.txt
+sampleusr@foohost:~/foo$ docker run -it -v $(pwd)/hoge:/hoge busybox
+/ # ls -al /hoge
+total 8
+drwxr-xr-x    2 1000     9999          4096 Apr 20 07:41 .
+drwxr-xr-x    1 root     root          4096 Apr 20 07:42 ..
+-rw-r--r--    1 1000     9999             0 Apr 20 07:41 hoge.txt
+/ # touch /hoge/foo.txt
+/ # ls -al /hoge
+total 8
+drwxr-xr-x    2 1000     9999          4096 Apr 20 07:43 .
+drwxr-xr-x    1 root     root          4096 Apr 20 07:42 ..
+-rw-r--r--    1 root     root             0 Apr 20 07:43 foo.txt
+-rw-r--r--    1 1000     9999             0 Apr 20 07:41 hoge.txt
+/ # exit
+sampleusr@foohost:~/foo$ ls -al hoge
+total 8
+drwxr-xr-x 2 sampleusr testgr 4096  4月 20 16:43 .
+drwxr-xr-x 4 sampleusr testgr 4096  4月 20 16:41 ..
+-rw-r--r-- 1 root      root      0  4月 20 16:43 foo.txt
+-rw-r--r-- 1 sampleusr testgr    0  4月 20 16:41 hoge.txt
+sampleusr@foohost:~/foo$ rm hoge/foo.txt
+rm: remove write-protected regular empty file 'hoge/foo.txt'?
+```
+
+コンテナ内で作成したファイル`foo.txt`はownerがrootになっているため、そのファイルをホストで削除しようとしても（ホストでは一般ユーザーとしてログインしているので）「プロテクトされとるぞ」とメッセージが出力される。
+
+この現象は、どうもLinuxのホストでLinuxのコンテナを利用するときに発生するようで、ホストがWindowsかmacOSの場合は発現しなかった。
+
+### reference
+
+1. [dockerでvolumeをマウントしたときのファイルのowner問題](https://qiita.com/yohm/items/047b2e68d008ebb0f001)
+2. [Docker コンテナ内で Docker ホストと同じユーザを使う](https://blog.amedama.jp/entry/docker-container-host-same-user)

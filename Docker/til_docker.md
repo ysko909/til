@@ -325,7 +325,7 @@ sampleusr@foohost:~/foo$ touch hoge/fuga/piyo/foo.txt
 touch: cannot touch 'hoge/fuga/piyo/foo.txt': Permission denied
 ```
 
-他のケースとしては、コンテナ内で作成されたフォルダに対しファイルを作成しようとすると権限エラーが起きる。フォルダのownerがrootになっているため、ホスト側でログインしている一般ユーザーの権限では足りないからだ。
+他のケースとしては、コンテナ内で作成されたフォルダに対しファイルを作成しようとすると権限エラーが起きる。フォルダのownerがrootになっているため、ホスト側でログインしている一般ユーザーの権限では足りないからだ。もちろんフォルダの削除もできない。
 
 この現象は、どうもLinuxのホストでLinuxのコンテナを利用するときに発生するようで、ホストがWindowsかmacOSの場合は発現しなかった。
 

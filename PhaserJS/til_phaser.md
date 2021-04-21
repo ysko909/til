@@ -1111,5 +1111,5 @@ game.scene.start('GameScene');
 3. [Phaser.Input.InputPlugin](https://photonstorm.github.io/phaser3-docs/Phaser.Input.InputPlugin.html)
 4. [Container To Render Texture](https://www.phaser.io/examples/v3/view/game-objects/render-texture/container-to-render-texture)
 5. [Registry Data Exchange Es6](https://phaser.io/examples/v3/view/scenes/registry-data-exchange-es6)
-   ちなみにこのサンプルはなにか挙動がおかしくて、「赤いオブジェクトをクリックしたらペナルティ」なはずなのだが、ペナルティの処理が正常に動作しておらず通常と同じく得点として処理されている。
+   ちなみにこのサンプルはなにか挙動がおかしくて、「赤いオブジェクトをクリックしたらペナルティ」なはずなのだが、ペナルティの処理が正常に動作しておらず通常と同じく得点として処理されている。原因は`if`文の条件が`===255`になっているせいで、試しに`>255`へ修正してみると想定通りの動作をする。判定対象の変数に、小数を含む値が含まれているせいかもしれないが未確認。
 6. [setInteractive() on a whole group](https://www.html5gamedevs.com/topic/36248-setinteractive-on-a-whole-group/)

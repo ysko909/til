@@ -311,7 +311,25 @@ rm: remove write-protected regular empty file 'hoge/foo.txt'?
 
 コンテナ内で作成したファイル`foo.txt`はownerがrootになっているため、そのファイルをホストで削除しようとしても（ホストでは一般ユーザーとしてログインしているので）「プロテクトされとるぞ」とメッセージが出力される。
 
+```console
+sampleusr@foohost:~/foo$ mkdir hoge
+sampleusr@foohost:~/foo$ docker run -it -v $(pwd)/hoge:/hoge busybox
+/ # mkdir -p /hoge/fuga/piyo
+/ # exit
+sampleusr@foohost:~/foo$ ls -al hoge
+total 12
+drwxr-xr-x 3 sampleusr testgr 4096  4月 21 13:19 .
+drwxr-xr-x 4 sampleusr testgr 4096  4月 21 13:18 ..
+drwxr-xr-x 3 root      root   4096  4月 21 13:19 fuga
+sampleusr@foohost:~/foo$ touch hoge/fuga/piyo/foo.txt
+touch: cannot touch 'hoge/fuga/piyo/foo.txt': Permission denied
+```
+
+他のケースとしては、コンテナ内で作成されたフォルダに対しファイルを作成しようとすると権限エラーが起きる。フォルダのownerがrootになっているため、ホスト側でログインしている一般ユーザーの権限では足りないからだ。
+
 この現象は、どうもLinuxのホストでLinuxのコンテナを利用するときに発生するようで、ホストがWindowsかmacOSの場合は発現しなかった。
+
+解決方法はいくつがあるが、コンテナ内で`useradd`して一般ユーザーを作成し作成した一般ユーザーで処理を実行する、というもの。ホスト側のユーザーに関するUIDやGIDを渡してやればいい。あるいはDockerコンテナ起動時に`-u`オプションで起動時のUIDやGIDをコンテナに引き継ぐことができる。ただし、後者の方法は`/etc/passwd`と`/etc/group`をコンテナにボリュームマウントする必要がある。
 
 ### reference
 

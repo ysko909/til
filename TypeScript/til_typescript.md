@@ -72,7 +72,7 @@ let sample : TypeSample = {
 1. [Everyday types](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html)
 1. [TypeScript のオブジェクト型リテラルいろいろ](https://qiita.com/hida/items/fb0379353bbb71f8191b)
 
-## TypeScriptでオブジェクトの型を定義する方法
+## TypeScriptでオブジェクトの型を定義するときは`interface`か`type`を使う
 
 ### detail
 
@@ -114,7 +114,7 @@ type Person = {
 2. [【翻訳】TypeScriptにおけるInterfaceとType aliasの違い](https://freelance-jak.com/technology/typescript/1988/)
 3. [【TypeScript】type の使いどころが知りたい話](https://mslgt.hatenablog.com/entry/2019/12/06/063526)
 
-## TypeScriptのfunction型について
+## TypeScriptには「function型」という型がある
 
 ### detail
 
@@ -329,7 +329,7 @@ game.scene.start('mainScene');
 1. [JSのクラス名をゲットする](https://qiita.com/makerbox/items/3f6ed31abbb128f5edb1)
 1. [JavaScriptの「型」の判定について](https://qiita.com/south37/items/c8d20a069fcbfe4fce85)
 
-## 型定義ファイルがないよと言われたら
+## 型定義ファイルがないよと言われたらインストールが必要
 
 ### detail
 
@@ -371,7 +371,7 @@ error An unexpected error occurred: "https://registry.yarnpkg.com/@types%2fphase
 3. [TypeScript で型定義ファイル( d.ts )がないときの対処法](https://qiita.com/Nossa/items/726cc3e67527e896ed1e)
 4. [JavaScriptの資産と@types](http://typescript.ninja/typescript-in-definitelyland/at-types.html)
 
-## インデックスシグネチャについて
+## インデックスシグネチャで連想配列を使う
 
 ### detail
 
@@ -422,7 +422,7 @@ console.log(hoge.foa);
 2. [Index signature（インデックス型）](https://typescript-jp.gitbook.io/deep-dive/type-system/index-signatures)
 3. [TypeScript：インデックスシグネチャが型安全を破壊する例](https://qiita.com/aakasaka/items/0b081c90b1b99b82143c)
 
-## TypeScriptでの型指定について
+## TypeScriptのチュートリアルをやってみる
 
 ### detail
 

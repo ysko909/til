@@ -114,3 +114,132 @@ line10
 
 1. [14 tail and head commands in Linux/Unix](https://www.linux.com/training-tutorials/14-tail-and-head-commands-linuxunix/)
 2. [ファイルのn行目以降を表示する](https://qiita.com/sugyan/items/523ed9417678fbdbae53)
+
+## `awk`を使う
+
+### detail
+
+ファイルやコマンドの出力結果といった文字列を編集するのに有効な`awk`について、簡単な使い方を書く。`awk`自体とても奥深いコマンドなのだが、ここでは軽くワンライナーでざっくり触れる程度の紹介とする。
+
+```console
+/home/hoge # ls -al
+total 12
+drwxr-xr-x    2 root     root          4096 Apr 23 02:53 .
+drwxr-xr-x    1 nobody   nobody        4096 Apr 23 02:52 ..
+-rw-r--r--    1 root     root            61 Apr 23 02:53 hoge.txt
+/home/hoge # ls -al | awk '{print $1}'
+total
+drwxr-xr-x
+drwxr-xr-x
+-rw-r--r--
+/home/hoge # ls -al | awk '{print $2}'
+12
+2
+1
+1
+/home/hoge # ls -al | awk '{print $3}'
+
+root
+nobody
+root
+/home/hoge # ls -al | awk '{print $3 $5}'
+
+root4096
+nobody4096
+root61
+/home/hoge # ls -al | tail -n +2 | awk '{print $3 ":" $5}'
+root:4096
+nobody:4096
+root:61
+```
+
+コマンド結果を`awk`で整形したければ、パイプで繋げばいい。`$1`の指定は1行目を意味していて、この場合スペースがある列で構成されていると解釈している。`{print $1}`の形式で書くと、「各行の1列目を出力しろ」という意味になる。
+
+```console
+/home/hoge # cat hoge.txt
+hoge fuga piyo
+foo bar baz
+ham eggs spam python
+/home/hoge # awk '{print}' hoge.txt
+hoge fuga piyo
+foo bar baz
+ham eggs spam python
+/home/hoge # awk '{print $1 "///" $3}' hoge.txt
+hoge///piyo
+foo///baz
+ham///spam
+/home/hoge # awk 'NR==2{printf "%s-%s-%s\n", $2, $1, $3}' hoge.txt
+bar-foo-baz
+/home/hoge # awk 'NR==2;{printf "%s-%s-%s\n", $2, $1, $3}' hoge.txt
+fuga-hoge-piyo
+foo bar baz
+bar-foo-baz
+eggs-ham-spam
+/home/hoge # awk '/g/{printf "%s-%s-%s\n", $2, $1, $3}' hoge.txt
+fuga-hoge-piyo
+eggs-ham-spam
+```
+
+`print`以外では`printf`も使える。C言語の`printf`のように、出力するフォーマットと出力する値（ここでは列数）を指定して実行できる。
+
+出力する行を限定したい場合、`NR==`と指定することで出力する行数を指定できる。その際、`;`で区切ると条件が並列処理されるが、区切らない場合は直列処理される。`'NR==2;{print $1}'`であれば「2行目を出力しろ、それから全行の1列目を出力しろ」という処理になるが、`'NR==2{print $1}'`であれば「2行目を対象とし1列目を出力しろ」となるので2行目の1列目のみ出力される。
+
+出力したい条件に文言を指定する場合は`/hoge/`と指定する。この場合、hogeという文字列を含む行全てが出力対象になる。
+
+### reference
+
+1. [awk](https://ja.wikipedia.org/wiki/AWK)
+2. [とほほのAWK入門](http://www.tohoho-web.com/ex/awk.html)
+
+## `grep`でOr検索したい場合は`-e`オプションをつける
+
+### detail
+
+```console
+/home/hoge # cat /etc/group
+root:x:0:
+daemon:x:1:
+bin:x:2:
+sys:x:3:
+adm:x:4:
+tty:x:5:
+disk:x:6:
+lp:x:7:
+mail:x:8:
+kmem:x:9:
+wheel:x:10:root
+cdrom:x:11:
+dialout:x:18:
+floppy:x:19:
+video:x:28:
+audio:x:29:
+tape:x:32:
+www-data:x:33:
+operator:x:37:
+utmp:x:43:
+plugdev:x:46:
+staff:x:50:
+lock:x:54:
+netdev:x:82:
+users:x:100:
+nobody:x:65534:
+/home/hoge # cat /etc/group | grep -e tt -e ad
+adm:x:4:
+tty:x:5:
+/home/hoge # cat /etc/group | grep -e tt -e da
+daemon:x:1:
+tty:x:5:
+www-data:x:33:
+/home/hoge # cat /etc/group | grep -e tt -e da -e pe
+daemon:x:1:
+tty:x:5:
+tape:x:32:
+www-data:x:33:
+operator:x:37:
+```
+
+`-e`オプションをつけて列挙することで、それらがOr条件として処理される。なお、`-i`などのオプションは、`grep -i -e a -e b -e c`のように`-e`より先に記述しておくと見やすいと思う。
+
+### reference
+
+1. [grepで複数の文字列を検索する方法（OR検索）](https://ex1.m-yabe.com/archives/2826)

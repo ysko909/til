@@ -1070,9 +1070,11 @@ const f2 = (...arg?: string[]) => { // error "A rest parameter cannot be optiona
 1. [More on functions](https://www.typescriptlang.org/docs/handbook/2/functions.html)
 2. [TypeScript プログラミング -関数 -引数](https://docs.solab.jp/typescript/function/parameter/)
 
-## TypeScriptでは配列はconstで宣言しても不変のものとして扱われない
+## 配列をスプレッド構文で展開し引数に指定すると引数なしエラーになる
 
 ### detail
+
+もともとの原因はJSの仕様にあると思うが、メモしておく。
 
 配列をスプレッド構文で展開し、ある関数の引数に指定するときエラーが発生する場合がある。しかも、「この関数はn個の引数が必要なのに、指定された引数は**0個**だぜ」と言われる。実際のエラーメッセージとしては「Expected n arguments, but got 0 or more.」という感じ。
 

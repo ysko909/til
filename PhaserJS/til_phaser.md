@@ -967,7 +967,7 @@ this.add.image(0, 0, 'backgroundImage').setOrigin(0.5, 0.5).setScrollFactor(0.25
 1. [Phaser.GameObjects.Components. ScrollFactor ](https://photonstorm.github.io/phaser3-docs/Phaser.GameObjects.Components.ScrollFactor.html#setScrollFactor__anchor)
 1. [Add Pizazz with Parallax Scrolling in Phaser 3](https://blog.ourcade.co/posts/2020/add-pizazz-parallax-scrolling-phaser-3/)
 
-## 角の丸い四角を描画するには`fillRoundedRect()``strokeRoundedRect()`を使う
+## 角の丸い四角を描画するには`fillRoundedRect()`や`strokeRoundedRect()`を使う
 
 ### detail
 

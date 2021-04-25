@@ -344,7 +344,6 @@ changeToDecimal('11111111');
 基数に2を指定することで、2進数から10進数への変換であることを指定可能。
 
 ```console
-No Results
 binary : 0
 decimal : 0
 binary : 1

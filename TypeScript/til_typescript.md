@@ -1305,7 +1305,7 @@ console.log(obj[hoge] === obj[fuga]); // true
 
 ### reference
 
-1. [](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Symbol)
+1. [Symbol](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Symbol)
 2. [JavaScript互換性の要！Symbol（シンボル）について](https://analogic.jp/symbol/)
 3. [ECMAScript6にシンボルができた理由](https://qiita.com/naruto/items/312adeb6145eb6221be7)
 4. [Symbolについて](http://js-next.hatenablog.com/entry/2014/03/01/001650)

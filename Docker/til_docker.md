@@ -374,6 +374,20 @@ dddddddddddd        hoge_nw                      bridge              local
 
 `docker network create`で、新しいネットワークを作成できる。`-d`はドライバーの指定で、今回は別ネットワークを作成する目的であるので`bridge`を指定した。
 
+> ネットワークの作成時は --subnet オプションの指定を強く推奨します。 --subnet を指定しなければ、docker デーモンはネットワークに対してサブネットを自動的に割り当てます。その時、Docker が管理していない基盤上の別サブネットと重複する可能性があります。
+
+オフィシャルのドキュメントには、`--subnet`を指定しろとあるので素直に指定しよう。
+
+```console
+docker network create -d bridge --subnet=123.1.3.0/24 --gateway=123.1.3.1 --ip-range=123.1.3.0/24 hoge_nw
+```
+
+- `--subnet`：サブネットを指定する。
+- `--gateway`：ゲートウェイを指定する。
+- `--ip-range`：作成するネットワークについて割り当てるIPアドレスの範囲。
+
+事前に調査しておいて、空いているIPアドレスを指定してやればいい。
+
 ```console
 docker network inspect hoge_nw
 ```
@@ -384,6 +398,7 @@ docker network inspect hoge_nw
 
 ### reference
 
+1. [network create](http://docs.docker.jp/engine/reference/commandline/network_create.html)
 1. [Docker コンテナ・ネットワークの理解](https://docs.docker.jp/engine/userguide/networking/dockernetworks.html)
 2. [network コマンドを使う](https://docs.docker.jp/engine/userguide/networking/work-with-networks.html)
 

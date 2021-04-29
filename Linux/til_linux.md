@@ -250,6 +250,13 @@ operator:x:37:
 
 タイトルは出オチなので、気にしてはいけない。
 
+```console
+ProductName:	Mac OS X
+ProductVersion:	10.15.7
+```
+
+上記の環境で実行している。
+
 `which`はコマンドの場所を出力する。
 
 ```console

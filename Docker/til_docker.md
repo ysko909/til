@@ -306,10 +306,11 @@ drwxr-xr-x 4 sampleusr testgr 4096  4月 20 16:41 ..
 -rw-r--r-- 1 root      root      0  4月 20 16:43 foo.txt
 -rw-r--r-- 1 sampleusr testgr    0  4月 20 16:41 hoge.txt
 sampleusr@foohost:~/foo$ rm hoge/foo.txt
-rm: remove write-protected regular empty file 'hoge/foo.txt'?
+rm: remove write-protected regular empty file 'hoge/foo.txt'? y
+rm: cannot remove 'hoge/foo.txt': Permission denied
 ```
 
-コンテナ内で作成したファイル`foo.txt`はownerがrootになっているため、そのファイルをホストで削除しようとしても（ホストでは一般ユーザーとしてログインしているので）「プロテクトされとるぞ」とメッセージが出力される。
+コンテナ内で作成したファイル`foo.txt`はownerがrootになっているため、そのファイルをホストで削除しようとしても（ホストでは一般ユーザーとしてログインしているので）Permission denidとメッセージが出力される。
 
 ```console
 sampleusr@foohost:~/foo$ mkdir hoge

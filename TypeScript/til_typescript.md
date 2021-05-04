@@ -934,7 +934,7 @@ console.log(f3()); // error "Expected 1-3 arguments, but got 0."
 
 関数`f`のように引数名に`?`がない場合、引数を省略し実行しようとしてもエラーになる。しかし、`引数名?`とすることでその引数をオプション扱いにできるので、引数を省略して関数を実行することが可能になる。
 
-オプションの引数と必須の引数を、1つの関数に同居させることも可能。この場合、必須の引数が存在するため引数を完全に省略して関数を実行するのは不可能だが、オプションの引数は省略が可能。
+オプションの引数と指定必須の引数を、1つの関数に同居させることも可能。この場合、必須の引数が存在するため引数を完全に省略して関数を実行するのは不可能だが、オプションの引数は省略が可能。
 
 ### reference
 
@@ -1246,3 +1246,119 @@ fuga = [[[1, 2], ['foo'],], [['bar', 3], ['baz', 4, 5, 6], [7]], [[8]], [['ham',
 ### reference
 
 1. [「型指定の方法」と「基本型の種類」](https://www.wakuwakubank.com/posts/499-typescript-type/)
+
+## オブジェクトを引数にしたときのオプション指定はプロパティごとに可能
+
+### detail
+
+オブジェクトを関数の引数に指定するとき、プロパティの一部をオプションにしたい場合は、`?`を付与することでプロパティごとにオプション扱いできる。
+
+```typescript
+const func=(arg:{hoge: number, fuga: string, piyo: number[]})=>{
+    console.log(arg.hoge);
+    console.log(arg.fuga);
+    console.log(arg.piyo);
+};
+
+func({
+    hoge: 1,
+    fuga: 'foo',
+    // Argument of type '{ hoge: number; fuga: string; }' is not assignable to parameter of type '{ hoge: number; fuga: string; piyo: number[]; }'.
+    // Property 'piyo' is missing in type '{ hoge: number; fuga: string; }' but required in type '{ hoge: number; fuga: string; piyo: number[]; }'.(2345)
+});
+```
+
+上記のように、全プロパティが必須であるオブジェクトを引数にとる関数`func`があったとき、あるプロパティを省略すると当たり前だがエラーになる。
+
+```typescript
+const func=(arg:{hoge: number, fuga: string, piyo?: number[]})=>{
+    console.log(arg.hoge);
+    console.log(arg.fuga);
+    console.log(arg.piyo);
+};
+
+func({
+    hoge: 1,
+    fuga: 'foo',
+});
+```
+
+上記のようにオプション扱いしたいプロパティに`?`を付与することで、そのプロパティを省略可能とする。
+
+```console
+1 
+"foo" 
+undefined 
+```
+
+なお、オプション扱いしているのでプロパティ`piyo`に値はセットされていない。その状態で上記のコードは実行すると、当たり前だが`undefined`になるので注意が必要。
+
+```typescript
+
+type Hoge = {
+    foo: number[];
+    bar: string;
+    baz: Function;
+};
+
+const sum = (numbers: number[]) => numbers.reduce((total, value) => total + value);
+
+const func = (hoge: Hoge) => {
+    const {
+        foo = [100, 200, 300],
+        bar= 'init',
+        baz=(arg: string)=>'init: ' + arg
+    } = hoge;
+    
+    console.log(sum(foo));
+    console.log(bar.substr(3, 5));
+    console.log(baz('hogehoge'));
+}
+
+let hoge:Hoge = {
+    foo: [1, 2, 3, 4, 5],
+    bar: 'hogefugapiyo',
+    // baz: (arg: string) => arg + ' in func'
+    // Property 'baz' is missing in type '{ foo: number[]; bar: string; }' but required in type 'Hoge'.
+}
+
+func(hoge);
+```
+
+`type`で引数のオブジェクトの内容を指定する方法でも同じ。全プロパティを必須扱いすると、関数実行時にプロパティの指定がないとエラーになる。
+
+```typescript
+
+type Hoge = {
+    foo: number[];
+    bar: string;
+    baz?: Function; // ?を付与した
+};
+
+const sum = (numbers: number[]) => numbers.reduce((total, value) => total + value);
+
+const func = (hoge: Hoge) => {
+    const {
+        foo = [100, 200, 300],
+        bar= 'init',
+        baz=(arg: string)=>'init: ' + arg
+    } = hoge;
+    
+    console.log(sum(foo));
+    console.log(bar.substr(3, 5));
+    console.log(baz('hogehoge'));
+}
+
+let hoge:Hoge = {
+    foo: [1, 2, 3, 4, 5],
+    bar: 'hogefugapiyo',
+}
+
+func(hoge);
+```
+
+オプション扱いしてやれば、該当するプロパティに関しては省略してもエラーにならない。
+
+### reference
+
+1. [TypeScript の Optional Property](https://ema-hiro.hatenablog.com/entry/2019/01/28/013325)

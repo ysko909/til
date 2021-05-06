@@ -182,7 +182,7 @@ eggs-ham-spam
 
 `print`以外では`printf`も使える。C言語の`printf`のように、出力するフォーマットと出力する値（ここでは列数）を指定して実行できる。
 
-出力する行を限定したい場合、`NR==`と指定することで出力する行数を指定できる。その際、`;`で区切ると条件が並列処理されるが、区切らない場合は直列処理される。`'NR==2;{print $1}'`であれば「2行目を出力しろ、それから全行の1列目を出力しろ」という処理になるが、`'NR==2{print $1}'`であれば「2行目を対象とし1列目を出力しろ」となるので2行目の1列目のみ出力される。
+出力する行を限定したい場合、`NR==`と指定することで出力する行数を指定できる。その際、`;`で区切ると条件が並列処理されるが、区切らない場合は直列処理される。`'NR==2;{print $1}'`であれば「2行目を出力しろ、それから全行の1列目を出力しろ」という処理になるが、`'NR==2{print $1}'`であれば「2行目を対象とし1列目を出力しろ」となるので2行目の1列目のみ出力される。なお、単純に`print`文の中に`NR`と記述すると、行数を表示してくれる。
 
 出力したい条件に文言を指定する場合は`/hoge/`と指定する。この場合、hogeという文字列を含む行全てが出力対象になる。
 
@@ -258,6 +258,51 @@ $ awk '{print NR ":" $2 + 3;}' hoge.txt
 ```
 
 今度は、ファイル内に数字と文字列を含む場合を考える。この場合は、文字列を0と見なすようだ。ファイル側の3行目は「foo 6」であるが、`$1 * $2`を計算すると`0 * 6`となり結果は0になる。あるいは`$2 + 3`だと結果は9（`6+3`）になる。上記のように、計算対象が数値と文字列を含むようなファイルであったとしても、プログラミング言語のように「データ型が違うぞ」みたいな感じのエラーにはならないので、そこだけは注意が必要。
+
+```console
+$ ls | grep ".*.txt"
+fuga.txt
+hoge.txt
+piyo.txt
+$ ls | grep ".*.txt" | xargs cat
+11 12
+13
+14 15 16 17
+18 19 20
+1 2
+3 4 5
+6 7 8 9
+10
+100
+200 300
+400 500 600
+700 800 900 1000
+$ ls | grep ".*.txt" | xargs awk '{print FILENAME ":" $1 " " $2 " " $3 " ans: " $1 + $2 + $3;}'
+fuga.txt:11 12  ans: 23
+fuga.txt:13   ans: 13
+fuga.txt:14 15 16 ans: 45
+fuga.txt:18 19 20 ans: 57
+hoge.txt:1 2  ans: 3
+hoge.txt:3 4 5 ans: 12
+hoge.txt:6 7 8 ans: 21
+hoge.txt:10   ans: 10
+piyo.txt:100   ans: 100
+piyo.txt:200 300  ans: 500
+piyo.txt:400 500 600 ans: 1500
+piyo.txt:700 800 900 ans: 2400
+```
+
+`print`文の中で`FILENAME`と書くと、処理対象のファイル名が出力される。
+
+```console
+ ls | grep ".*.txt" | xargs awk 'FILENAME=="hoge.txt"{print FILENAME ":" $1 " " $2 " " $3 " ans: " $1 + $2 + $3;}'
+hoge.txt:1 2  ans: 3
+hoge.txt:3 4 5 ans: 12
+hoge.txt:6 7 8 ans: 21
+hoge.txt:10   ans: 10
+```
+
+`FILENAME==ファイル名`とすると、処理対象のファイルを指定できる。
 
 ### reference
 
@@ -376,3 +421,70 @@ type is /usr/bin/type
 1. [type](https://ss64.com/osx/type.html)
 2. [Why “which” command does not give you the correct path?](https://apple.stackexchange.com/questions/73965/why-which-command-does-not-give-you-the-correct-path)
 
+## コマンドの実行結果を引数として引き継ぐときは`xargs`を使う
+
+### detail
+
+あるコマンドの実行結果を次に実行するコマンドに引き継ぎたい場合、よく利用するのはパイプ（`|`）で連結するパターン。ただし、これは「実行結果を次のコマンドの**入力として**引き継ぐ」方法で、実行結果を次のコマンドの**引数として**引き継ぐわけではない。よって、`ls`の結果をパイプし`grep`への入力とすることで出力を絞り込むことはできるが、`ls`で出力されたファイルに対し`awk`を順次実行するということはできない。
+
+引数として引き継ぐには、パイプとともに`xargs`コマンドを利用する。
+
+```console
+$ cat hoge.txt
+foo
+bar
+baz
+$ pwd
+/root
+$ ls
+hoge.txt
+$ awk '{print $1}' hoge.txt | xargs mkdir
+$ ls
+bar       baz       foo       hoge.txt
+```
+
+使い方は、パイプで繋ぎ前のコマンドの実行結果を引き継ぎ、`xargs 実行したいコマンドとオプション`という形で記述する。
+
+上記では`awk`の結果を`mkdir`に引き継いで、ファイル`hoge.txt`に記述されている内容でフォルダを作成している。
+
+```console
+$ ls
+bar       baz       foo       fuga.txt  hoge.txt  piyo.txt
+$ ls | grep ".*.txt"
+fuga.txt
+hoge.txt
+piyo.txt
+$ ls | grep ".*.txt" | xargs cat
+11 12
+13
+14 15 16 17
+18 19 20
+1 2
+3 4 5
+6 7 8 9
+10
+100
+200 300
+400 500 600
+700 800 900 1000
+$ ls | grep ".*.txt" | xargs awk '{print FILENAME ":" $1 " " $2 " " $3 " ans: " $1 + $2 + $3;}'
+fuga.txt:11 12  ans: 23
+fuga.txt:13   ans: 13
+fuga.txt:14 15 16 ans: 45
+fuga.txt:18 19 20 ans: 57
+hoge.txt:1 2  ans: 3
+hoge.txt:3 4 5 ans: 12
+hoge.txt:6 7 8 ans: 21
+hoge.txt:10   ans: 10
+piyo.txt:100   ans: 100
+piyo.txt:200 300  ans: 500
+piyo.txt:400 500 600 ans: 1500
+piyo.txt:700 800 900 ans: 2400
+```
+
+テキストファイルが持つ数値を加算しファイルごとに結果を出力する、なんて処理もパイプと`xargs`を使うことで実現できる。`awk`の`FILENAME`という文字列は、処理対象のファイル名を出力してくれる。
+
+### reference
+
+1. [xargsコマンド](https://hydrocul.github.io/wiki/commands/xargs.html)
+2. [AWKの基本コマンドと使い方を徹底解説！テキスト加工やパターン・文字列処理の方法は？スクリプトとオプションも確認しよう](https://agency-star.co.jp/column/awk/)

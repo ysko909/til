@@ -1282,3 +1282,5 @@ game.scene.start('GameScene');
 ### reference
 
 1. [Phaser.Input.Keyboard.KeyCodes](https://photonstorm.github.io/phaser3-docs/Phaser.Input.Keyboard.KeyCodes.html)
+2. [Object.keys()](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Object/keys)
+3. [Array.prototype.filter()](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/filter)

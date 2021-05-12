@@ -1534,6 +1534,53 @@ console.log(c1, c2, c3);
 [LOG]: "d",  "d",  ["f", "g", "h"] 
 ```
 
+オブジェクトから変数に対し分割代入する場合で、任意のプロパティがオプション設定であると`type`宣言されたオブジェクトから分割代入するとき、オプションであるプロパティの**初期値**を決定できる。初期値の設定は、オプションではないプロパティに対しても可能だが、オプションでないプロパティはオブジェクトの宣言時に必ず何かしらの値を格納されるので、分割代入の際に初期値が採用されることがないと思われる。
+
+```typescript
+type Obj = {
+    foo: number;
+    bar: string;
+    baz?: string;
+}
+
+const obj1: Obj = {foo: 1, bar: 'ham', baz: 'eggs'};
+
+let {foo=2, bar='spam', baz='python'} = obj1;
+
+console.log(foo, bar, baz);
+
+```
+
+上記はすべてのプロパティについて分割代入したケース。
+
+```console
+1,  "ham",  "eggs" 
+```
+
+オブジェクトで宣言された値が、それぞれの変数に分割代入されたことがわかる。この際、初期値として指定した値は採用されていない。
+
+```typescript
+type Obj = {
+    foo: number;
+    bar: string;
+    baz?: string;
+}
+
+const obj2: Obj = {foo: 2, bar: 'ham'};
+
+let {foo =3, bar='spam', baz='python'} = obj2;
+
+console.log(foo, bar, baz);
+```
+
+上記は、オプションであるプロパティを記述しないでオブジェクトを宣言し、分割代入する例。
+
+```console
+2,  "ham",  "python" 
+```
+
+オプションであるプロパティ以外は、オブジェクトで宣言された値が変数に対し分割代入されている。オプションであるプロパティは値が指定されなかったが、初期値が採用されている。
+
 ### reference
 
 1. [分割代入](https://typescript-jp.gitbook.io/deep-dive/future-javascript/destructuring)

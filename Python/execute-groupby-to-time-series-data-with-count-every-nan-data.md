@@ -9,10 +9,10 @@ def count_nan_data_rows(df, *, col=[], nan_rows=3):
     # 連続欠損期間を出力する
 
     if len(col) == 0:
-        input_temp_df = df
+        input_temp_df = df.copy()
 
     else:
-        input_temp_df = df[col]
+        input_temp_df = df[col].copy()
 
     input_temp_df['nan_flag'] = input_temp_df.iloc[:, :].isnull().any(axis=1)
 

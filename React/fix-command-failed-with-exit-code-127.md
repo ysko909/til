@@ -10,6 +10,8 @@ command failed with exit code 127.
 
 コード127でエラーが表示される場合は、`yarn install`を行う。このコードが出現する理由は、モジュールをインストールしてないせいだからだ。言われてみれば、Node.js関連の構成ファイルはあっても、`node_modules`フォルダとかは`.gitignore`で無視されているため、GitHub上には上がってないんだった。
 
+`yarn install`は場合によっては、結構時間がかかるので気長に待とう。インストールが終わったところで`yarn start`したら正常に立ちあがった。
+
 ## reference
 
 1. [command failed with exit code 127.](https://github.com/reactstrap/reactstrap/issues/711)

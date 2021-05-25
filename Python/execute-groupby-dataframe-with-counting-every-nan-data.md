@@ -1,8 +1,8 @@
-# 時系列データで欠損値を含む行をカウントして結果を出力する
+# 欠損値を含む行がどのくらい連続しているかをカウントして結果を出力する
 
 ## detail
 
-欠損値を含む時系列データを扱っているとき、その欠損値が「どのくらいの期間欠損しているか」を調査したい。連続欠損期間が連続でどれだけあるかを計算する方法についてメモする。
+欠損値を含むデータを扱っているとき、その欠損値が「どのくらいの間、連続して欠損しているか」を調査したい。このとき、連続欠損期間が連続でどれだけあるかを出力する方法についてメモする。
 
 なお、ここで言う「連続」とは入力データの行において、欠損値を含む行が連続して存在していることを表す。よって、日次のデータであれば連続n日となるし、時間単位でのデータであれが連続m時間となるように、単位はデータの取得スパンに依存している。
 
@@ -156,5 +156,3 @@ print(count_nan_data_rows(df, col=['column00', 'column02', 'column05', 'column09
 6. [Pythonで一次元配列を二次元配列に変換（numpy.ndarray、リスト）](https://note.nkmk.me/python-list-ndarray-1d-to-2d/)
 7. [pandas.DataFrame, SeriesとNumPy配列ndarrayを相互に変換](https://note.nkmk.me/python-pandas-numpy-conversion/)
 8. [pandasで欠損値NaNが含まれているか判定、個数をカウント](https://note.nkmk.me/python-pandas-nan-judge-count/)
-
-

@@ -69,8 +69,41 @@ const value = obj1[key];
 
 ```
 
-上記の場合、オブジェクト側をいじるではなく**変数側をいじる**。`key`がstring型であることが原因なのだから、これをstringでない別モノにしてやればいい。別モノとは、「`type`で宣言したオブジェクトのキーのどれかですよー」と言ってやることを指す。
+上記の場合、オブジェクト側をいじるではなく**変数側をいじる**。`key`がstring型であることが原因なのだから、これをstringでない別モノにしてやればいい。別モノとは、「`type`で宣言したオブジェクトのキー（のどれか）ですよー」と言ってやることを指す。そうすれば、キーごとに型が違う場合は個別に宣言ができるので、型チェックは従来通り正常に動作する。可能であれば、この方法がいいと思われる。
+
+ただ、上記の方法にも問題がある。それはオブジェクトが定義済みである場合、`keyof`を利用できないということ。
+
+```typescript
+const obj1 = {foo: 2, bar: 'ham'};
+
+let key: keyof obj1 = 'foo'; // これはエラーになる。
+
+const value = obj1[key];
+```
+
+上記のように、定義済みオブジェクトを`keyof`構文に対し指定することでできない。`'obj1' refers to a value, but is being used as a type here. Did you mean 'typeof obj1'?`と言われる。無論、`typeof`のタイポなどではなく、単純に定義済みオブジェクトが`keyof`の対象外ってだけだ。
+
+`keyof`はTypeScript独自の構文なのだが、`keyof`が参照する先は`type`あるいは`interface`で宣言したものであり、オブジェクトそのものではない。つまり、`keyof`は宣言済みの定義に基づいているので、定義済みオブジェクトの内容を参照してデータ型を逆算したり推測したりしているわけではない。そのため、オブジェクトが定義済みである場合はこの方法ば利用できず、1つ前の`[key: string]: any;`の形式で`type`を使い宣言するしかない。
+
+```typescript
+type Obj = {
+    foo: number;
+    bar: string;
+    [key: string]: (number | string);
+};
+
+const obj1: Obj = {foo: 2, bar: 'ham'};
+
+let key: keyof Obj = 'foo';
+
+const value = obj1[key];
+
+```
+
+一応、上記のようにすればエラーが発生することはないし、`[key: string]: any;`だけでなく普段通り`キー名: 値の型`で宣言しておけば、宣言済みのキーに関しては型チェックが働く。まぁ、既存以外のプロパティについては型チェックが働かないってのは今まで通りなのだが。
 
 ## reference
 
-1. []()
+1. [Typescript ブラケット記法(Object[key])でno index signatureエラーをtype safeに解決したい。](https://aknow2.hatenablog.com/entry/2018/11/14/143033)
+2. [Object等の呼び出しでkeyに動的な変数を使う [TypeScript]](https://qiita.com/tktcorporation/items/051bb03bb4d72930d8e9)
+3. [Keyof Type Operator](https://www.typescriptlang.org/docs/handbook/2/keyof-types.html)

@@ -54,7 +54,7 @@ return (
 
 ```jsx
 const elem = (
-  /* hoge */
+  // hoge
   <h1>hoge</h1>
 );
 

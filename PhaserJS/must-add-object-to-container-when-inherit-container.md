@@ -121,3 +121,4 @@ game.scene.start('gameScene');
 
 1. [Phaser.GameObjects.Container](https://photonstorm.github.io/phaser3-docs/Phaser.GameObjects.Container.html)
 2. [laineus/unsung-kingdom/](https://github.com/laineus/unsung-kingdom/tree/master/src/class)
+3. [Child order](http://phaser.io/examples/v3/view/game-objects/container/child-order#)

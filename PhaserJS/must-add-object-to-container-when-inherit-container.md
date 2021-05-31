@@ -119,4 +119,4 @@ game.scene.start('gameScene');
 
 ## reference
 
-1. []()
+1. [laineus/unsung-kingdom/](https://github.com/laineus/unsung-kingdom/tree/master/src/class)

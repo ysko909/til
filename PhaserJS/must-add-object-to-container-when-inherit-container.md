@@ -103,7 +103,7 @@ game.scene.start('gameScene');
 
 結論から言うと、`add()`しなかったコンテナでも画面表示までは実行されるが、コンテナに対する処理の`destroy()`が実行されなかった。
 
-コンテナ`container1`の中には以下の要素そ含んでいる。
+コンテナ`container1`の中には以下の要素を含んでいる。
 
 - 黒い四角（クラス`BackgroundScreen`）
 - 文字

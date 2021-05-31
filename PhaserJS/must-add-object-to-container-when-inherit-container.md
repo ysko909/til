@@ -72,7 +72,7 @@ class BaseScene extends Phaser.Scene {
       container1.add(container2);
       
       this.timerOneShot = this.time.delayedCall(3000, ()=>{
-        container1.destroy();  // container1に含まれるオブジェクトがすべて削除される・・・はずが、コンテナcontainer2だけ残存する
+        container1.destroy();  // container1に含まれるオブジェクトがすべて削除される・・・はずが、青い四角だけ残存する
       }, this);
     }
 }

@@ -6,8 +6,8 @@
 
 そこで、テキストベースでチャートが書ける[PlantUML](https://plantuml.com/)を検討したい。vscodeでMarkdown書いてる中に、PlantUMLの文法でチャートを埋め込めるので基本的にはテキストベースに扱える。プレビューすればちゃんとチャートとして表示されるうえ、コードを変更すればホットリロードでプレビュー側も更新してくれる。よって、普通のMarkdownとして変更箇所の確認もできるため管理上かなり楽になる。
 
-```markdown
-````plantuml
+````markdown
+```plantuml
 @startuml
 
 start
@@ -17,10 +17,12 @@ start
 end
 
 @enduml
+```
 ````
 
-```
+PlantUMLをMarkdown中に記述する場合は、上記のほうに`\```plantuml`で囲った中に
 
 ## reference
 
 1. [PlantUML](https://plantuml.com/ja/)
+2. [アクティビティ図](https://plantuml.com/ja/activity-diagram-beta)

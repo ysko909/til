@@ -20,7 +20,7 @@ end
 ```
 ````
 
-PlantUMLをMarkdown中に記述する場合は、上記のほうに`\```plantuml`で囲った中に
+PlantUMLをMarkdown中に記述する場合は、上記のほうに`@startuml`と`@enduml`で囲った中に表示したい図をPlantUMLの文法に従って記述すればいい。上記だとアクティビティ図（フローチャートっぽいやつ）になる。他の図については、[オフィシャル](https://plantuml.com/ja/)に様々なサンプルがあるので、それを参考にすればいい。
 
 ## reference
 

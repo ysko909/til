@@ -75,5 +75,5 @@ Promise.all(promiseArray).then(()=>{
 ## reference
 
 1. [TypeScriptでPromiseを書く](https://osamtimizer.hatenablog.com/entry/2018/06/22/121235)
-1. [error TS2314: Generic type 'Promise<T>' requires 1 type argument(s)](https://stackoverflow.com/questions/39781618/error-ts2314-generic-type-promiset-requires-1-type-arguments)
+1. [error TS2314: Generic type 'xxx' requires 1 type argument(s)](https://stackoverflow.com/questions/39781618/error-ts2314-generic-type-promiset-requires-1-type-arguments)
 1. [Promise.all()で非同期処理を並列に捌く](https://common-engineer.com/javascript/promise-all)

@@ -42,6 +42,12 @@ Promise.all(promiseArray).then(()=>{
 
 ```
 
+相変わらず上記はTypeScriptで記述しているが、JavaScriptでも似たようなものだと思う。
+
+関数`getBool()`はランダムでTrueあるいはFalseを返す。この値に基づいて、`Promise`は解決か拒否かを判断している。
+
+複数の`Promise`オブジェクトを生成するため、`forEach`で待機時間の異なる`Promise`オブジェクトを生成している。これらの`Promise`オブジェクトについて、`Promise.all`を使って一括処理してみようということだ。
+
 ```console
 "proccess start." 
 "resolve :1" 
@@ -50,6 +56,10 @@ Promise.all(promiseArray).then(()=>{
 "resolve." 
 "finally." 
 ```
+
+実行してみると上記のような結果になった。これは、生成した3つの`Promise`オブジェクトについて、すべて解決した場合の結果である。つまり、`Promise.all`は指定された複数の`Promise`オブジェクトについて、**すべて解決であるなら**`Promise.all`の結果も「解決」へ遷移する。
+
+では、複数の`Promise`オブジェクトのうち、拒否状態に遷移したオブジェクトが存在する場合はどうなるのだろうか。
 
 ```console
 "proccess start." 
@@ -60,7 +70,10 @@ Promise.all(promiseArray).then(()=>{
 "resolve :0" 
 ```
 
+そのときの実行結果が上記である。複数の`Promise`オブジェクトについて、**1つでも拒否状態に遷移した時点で**`Promise.all`も「拒否」状態に遷移している。複数の`Promise`オブジェクトを実行したとき、すべての処理完了を待っているとパフォーマンスが悪い。よって、1つでも拒否状態となったのなら、`Promise.all`としては拒否状態へ遷移することが決定されるので、他の処理の完了を待っていても仕方がない、ということになる。
+
 ## reference
 
 1. [TypeScriptでPromiseを書く](https://osamtimizer.hatenablog.com/entry/2018/06/22/121235)
 1. [error TS2314: Generic type 'Promise<T>' requires 1 type argument(s)](https://stackoverflow.com/questions/39781618/error-ts2314-generic-type-promiset-requires-1-type-arguments)
+1. [Promise.all()で非同期処理を並列に捌く](https://common-engineer.com/javascript/promise-all)

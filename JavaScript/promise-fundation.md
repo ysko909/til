@@ -186,3 +186,4 @@ funcPromise.then(()=>{
 2. [PromiseによるJavaScript非同期処理レシピ集](https://sbfl.net/blog/2019/11/04/promise-cookbook/)
 3. [JavaScriptのPromiseって何？を解決したい](https://reffect.co.jp/html/promise-is-what)
 4. [【JavaScript】初心者にもわかるPromiseの使い方](https://techplay.jp/column/581)
+5. [Property 'finally' does not exist on type 'Promise<void>'](https://stackoverflow.com/questions/52079031/property-finally-does-not-exist-on-type-promisevoid)

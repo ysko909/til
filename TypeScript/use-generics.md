@@ -66,9 +66,165 @@ console.log(hoge('123abc'));
 
 JSXのタグには`extends`という文法はないため、ジェネリクスとして扱われる。難点を上げるならば、`extends`を記述する場合は当たり前だが**制限する型を何かしら記述する必要がある**。ここで`string`とか`number`とか具体的な型で制限してしまうと、その型しか受け付けなくなってしまいジェネリクスの意味を成さない。そのため、**型引数の制限は記述するけど実質的に制限しない**という、一見不思議な状況を作る必要がある。この状況を成立させられるのが`unknown`という型。TypeScriptの仕様上、すべての型は`unknown`を継承して実装されているため、型引数`T`の制限を**実質的に制限しない**ものとして扱うことが可能になる。
 
+とは言え、これだけだとイマイチ実際に使えるシチュエーションが思い浮かばないと思うので、別のユースケースを考えてみる。
+
+たとえば複数のクラスが存在しており、それぞれのクラスについて配列があるとしよう。
+
+```typescript
+type Person = {
+    id: number;
+    name: string;
+}
+
+type Dog = {
+    id: number;
+    type: string;
+}
+
+type Company = {
+    id: number;
+    name: string;
+    phoneNumber: string;
+}
+
+let hogePerson: Person[] = [
+    {id: 1, name: 'foo'},
+    {id: 2, name: 'bar'},
+    {id: 3, name: 'baz'},
+    {id: 4, name: 'foofoo'},
+];
+
+let hogeDog: Dog[] = [
+    {id: 10, type: 'Labrador Retriever'},
+    {id: 11, type: 'German Shepherd'},
+    {id: 12, type: 'French Bulldog'}
+];
+
+let hogeCompany: Company[] = [
+    {id: 100, name: 'Apple.Inc', phoneNumber: '012-345-6789'},
+];
+
+```
+
+このクラスの配列に、要素を追加するような関数を作りたい。しかもただ、追加するだけでなく、プロパティ`id`が重複した場合は、新しい要素を基準にして`id`を採番しなおしてから追加したい。こういう場合、クラスごとに関数をそれぞれ別個に作成するわけにはいかない。クラスが100個あったら、それぞれにクラス用に関数を100個作るのか？という話になってしまうからだ。機能は「配列に要素を追加する」という共通した機能なのだから、入出力データの型さえ抽象化できれば1つの関数を流用できる。こういうシチュエーションで威力を発揮するのがジェネリクス、というわけだ。
+
+```typescript
+type Person = {
+    id: number;
+    name: string;
+}
+
+type Dog = {
+    id: number;
+    type: string;
+}
+
+type Company = {
+    id: number;
+    name: string;
+    phoneNumber: string;
+}
+
+type Obj = {
+    id: number;
+}
+
+const addItem = <T extends Obj>(array: T[], newItem: T): T[] => {
+    const idx = array.findIndex(item => item.id === newItem.id);
+    if (idx === -1){
+        return [
+            ...array,
+            newItem
+        ];
+    } else {
+        return [
+            ...array.slice(0, idx),
+            newItem,
+            ...array.slice(idx).map(item => {
+                item.id += 1;
+                return item;
+            })
+        ];
+    }
+};
+
+let hogePerson: Person[] = [
+    {id: 1, name: 'foo'},
+    {id: 2, name: 'bar'},
+    {id: 3, name: 'baz'},
+    {id: 4, name: 'foofoo'},
+];
+
+console.log(addItem<Person>(hogePerson, {id:3, name:'addItem'}));
+
+let hogeDog: Dog[] = [
+    {id: 10, type: 'Labrador Retriever'},
+    {id: 11, type: 'German Shepherd'},
+    {id: 12, type: 'French Bulldog'}
+];
+
+console.log(addItem<Dog>(hogeDog, {id: 9, type: 'Beagle'}));
+
+let hogeCompany: Company[] = [
+    {id: 100, name: 'Apple.Inc', phoneNumber: '012-345-6789'},
+];
+
+console.log(addItem<Company>(hogeCompany, {id: 100, name: 'Amazon.Inc', phoneNumber: '999-999-9999'}));
+
+```
+
+実際のコードは上記のようになる。
+
+```console
+
+[LOG]: [{
+  "id": 1,
+  "name": "foo"
+}, {
+  "id": 2,
+  "name": "bar"
+}, {
+  "id": 3,
+  "name": "addItem"
+}, {
+  "id": 4,
+  "name": "baz"
+}, {
+  "id": 5,
+  "name": "foofoo"
+}] 
+[LOG]: [{
+  "id": 10,
+  "type": "Labrador Retriever"
+}, {
+  "id": 11,
+  "type": "German Shepherd"
+}, {
+  "id": 12,
+  "type": "French Bulldog"
+}, {
+  "id": 9,
+  "type": "Beagle"
+}] 
+[LOG]: [{
+  "id": 100,
+  "name": "Amazon.Inc",
+  "phoneNumber": "999-999-9999"
+}, {
+  "id": 101,
+  "name": "Apple.Inc",
+  "phoneNumber": "012-345-6789"
+}] 
+```
+
+実行結果はこんな感じ。入出力データのクラスに関係なく、重複していれば`id`を採番し直しつつ要素を追加できた。
+
+このように、「入出力のデータ型が異なるだけで機能は共通」という場合は、ジェネリクスを使って機能を1つに共通化できる。
+
 ## reference
 
 1. [【TypeScript】Generics(ジェネリックス)を理解する](https://qiita.com/k-penguin-sato/items/9baa959e8919157afcd4)
 2. [ジェネリクス](http://js.studio-kingdom.com/typescript/handbook/generics)
 3. [What is the syntax for Typescript arrow functions with generics?](https://stackoverflow.com/questions/32308370/what-is-the-syntax-for-typescript-arrow-functions-with-generics)
 4. [【TypeScript】.tsx内でGeneric関数を定義する場合の注意点](https://marsquai.com/745ca65e-e38b-4a8e-8d59-55421be50f7e/1f67fdab-8e00-4ae1-a1b9-077d5a30a5d6/daf351d1-ce44-4bbe-9631-377326e2e43e/)
+5. [TypeScriptでジェネリクス(Generics)を理解するための簡単なチュートリアル](https://blog.mitsuruog.info/2019/03/try-typescript-generics-101)

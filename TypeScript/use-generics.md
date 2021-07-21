@@ -49,8 +49,26 @@ const foo = <T extends unknown>(x: T) => x; // 古いTypeScriptではこのよ�
 
 アロー関数でのジェネリクス記述時の特徴として、型引数にカンマを必ず記述する。これにより、アロー関数でもジェネリクスが書けるようになる。
 
+このカンマについてだが、調べると「カンマなくても書ける」という記事と「カンマないとエラーになる」という記事が混在している。ただ、カンマのない書き方をした場合、[TypeScriptのPlayground](https://www.typescriptlang.org/play)では`JSX element 'T' has no corresponding closing tag.`というエラーになる。
+
+ここで、エラーメッセージに含まれるJSXに気付いた。「なんでJSX？」と思ったら、どうもこれって**Reactに関連する現象**らしい。実際、さっきのエラーの他に`Cannot find name 'React'.`というエラーも同時に発生しており、なぜかReactを探しに行って「ないぞー」とエラーを吐いている。結論から言うと、ジェネリクスの文法`<>`がReact（というかJSX）の**タグとして誤って認識されている**のが原因で、「JSX使うならReact必要でしょ、でもReactないよ？」という解釈をコンパイラ側がしているために、前述のようなエラーを吐くことになる。実際はジェネリクスの文法だし、そもそもReactを使っていないのでこのエラーを解消するためには、ジェネリクスの文法であるカンマを書いて回避することになる。とりあえずカンマが1つ書いてあればジェネリクスとして認識されるようで、エラーは解消する。
+
+そして、カンマなしでOKというのは`*.ts`ファイルに書く場合のようだ。つまり、ファイルの拡張子からしてTypeScriptであると確認できる場合はJSXだと誤認しないので、コンパイラが`<>`の文法をジェネリクスだと正しく判断してくれる。
+
+ちなみにだが、カンマとは別の解消法がある。それは、`extends`を使って型引数を制限してしまう方法だ。
+
+```typescript
+const hoge = <T extends unknown>(arg: T) => arg;
+
+console.log(hoge(123));
+console.log(hoge('123abc'));
+```
+
+JSXのタグには`extends`という文法はないため、ジェネリクスとして扱われる。難点を上げれば、`extends`を記述する場合は当たり前だが**制限する型を何かしら記述する必要がある**。ここで`string`とか`number`とか具体的な型で制限してしまうと、その型しか受け付けなくなってしまいジェネリクスの意味を成さない。そのため、**型引数の制限は記述するけど実質的に制限しない**という、一見不思議な状況を作る必要がある。この状況を成立させられるのが`unknown`という型。TypeScriptの仕様上、すべての型は`unknown`を継承して実装されているため、型引数`T`の制限を**実質的に制限しない**ものとして扱うことが可能になる。
+
 ## reference
 
 1. [【TypeScript】Generics(ジェネリックス)を理解する](https://qiita.com/k-penguin-sato/items/9baa959e8919157afcd4)
 2. [ジェネリクス](http://js.studio-kingdom.com/typescript/handbook/generics)
 3. [What is the syntax for Typescript arrow functions with generics?](https://stackoverflow.com/questions/32308370/what-is-the-syntax-for-typescript-arrow-functions-with-generics)
+4. [【TypeScript】.tsx内でGeneric関数を定義する場合の注意点](https://marsquai.com/745ca65e-e38b-4a8e-8d59-55421be50f7e/1f67fdab-8e00-4ae1-a1b9-077d5a30a5d6/daf351d1-ce44-4bbe-9631-377326e2e43e/)
